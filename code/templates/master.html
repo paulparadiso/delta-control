@@ -1,6 +1,7 @@
 $def with(header, nav, playlists)
 $:header
 $:nav
+
 <div id=master-page">
 	<div id="master" class="top-bordered">
 		<span class="page-label">Master Controls</span>
@@ -8,15 +9,15 @@ $:nav
 	<div id="playback-controls" class="top-bordered">
 		Playback Controls<br>
 		<div class="playback-control">
-			<img onclick="sendCmd('play')" src="static/img/play.png"></img>
+			<img onclick="sendCmd('playback','play')" src="static/img/play.png"></img>
 			<br>play
 		</div>
 		<div class="playback-control">
-			<img onclick="sendCmd('pause')" src="static/img/pause.png"></img>
+			<img onclick="sendCmd('playback','pause')" src="static/img/pause.png"></img>
 			<br>pause
 		</div>
 		<div class="playback-control">
-			<img onclick="sendCmd('stop')" src="static/img/stop.png"></img>
+			<img onclick="sendCmd('playback','stop')" src="static/img/stop.png"></img>
 			<br>stop
 		</div>
 		<div class="playback-control">
@@ -36,6 +37,17 @@ $:nav
 		<div id="playlist-play">
 			<img onclick="sendPlaylist()" src="static/img/play.png"></img>
 		</div>	
+	</div>
+	<div id="power" class="top-bordered">
+		Power<br>
+		<div id="power-states">
+			<div onclick="sendCmd('power','all on')" id="power-button-on" class="power-button">
+				<img src="static/img/all_on.png">
+			</div>
+			<div onclick="sendCmd('power','all off')" id="power-button-off" class="power-button">
+				<img src="static/img/all_off.png">
+			</div>
+		</div>
 	</div>
 </div>
 </body

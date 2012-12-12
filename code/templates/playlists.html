@@ -1,0 +1,29 @@
+$def with(header, nav, playlists)
+$:header
+$:nav
+
+<div id="playlists-page">
+	<div id="playlists" class="top-bordered">
+		<span class="page-label">Current Playlists</span>
+	</div>
+	<div id="view-edit-tabs">
+		<div onclick="swapTab('view')" id="view-tab" class="tab active-tab">
+			View
+		</div>
+		<div onclick="swapTab('edit')" id="edit-tab" class="tab inactive-tab">
+			Edit
+		</div>
+	</div>
+	<div id="edit-button">
+		<img src="static/img/new_playlist.png">
+	</div>
+	$for i in playlists:
+		$ div_id = i.replace(' ','-')
+		<div id="$div_id" class="top-bordered">
+			<img onclick="openPlaylist('$div_id')" src="static/img/plus.png"></img>
+			$i
+			<img src="static/img/edit.png"></img>
+		</div>
+</body>
+</div>
+</div>
