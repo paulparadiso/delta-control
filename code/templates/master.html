@@ -1,0 +1,41 @@
+$def with(header, nav, playlists)
+$:header
+$:nav
+<div id=master-page">
+	<div id="master" class="top-bordered">
+		<span class="page-label">Master Controls</span>
+	</div>
+	<div id="playback-controls" class="top-bordered">
+		Playback Controls<br>
+		<div class="playback-control">
+			<img onclick="sendCmd('play')" src="static/img/play.png"></img>
+			<br>play
+		</div>
+		<div class="playback-control">
+			<img onclick="sendCmd('pause')" src="static/img/pause.png"></img>
+			<br>pause
+		</div>
+		<div class="playback-control">
+			<img onclick="sendCmd('stop')" src="static/img/stop.png"></img>
+			<br>stop
+		</div>
+		<div class="playback-control">
+			<img onclick="sendCmd('skip')" src="static/img/skip.png"></img>
+			<br>skip
+		</div>
+	</div>
+	<br>
+	<div id="playlist" class="top-bordered">
+		Playlist<br>
+		<div id="playlist-select">
+			<select id="playlist-dropdown">
+				$for i in playlists:
+					<option value="$i">$i</option>
+			</select>
+		</div>
+		<div id="playlist-play">
+			<img onclick="sendPlaylist()" src="static/img/play.png"></img>
+		</div>	
+	</div>
+</div>
+</body

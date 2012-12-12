@@ -1,0 +1,24 @@
+body{
+	width:100%;
+	height:100%;
+}
+
+.top-bordered{
+	width: 100%;
+	border-top: 1px black solid;
+	position: absolute;
+	overflow: auto;
+}
+
+.playback-control{
+	float: left;
+	#border-bottom: 1px black solid;
+}
+
+#playlist-select{
+	float: left;
+}
+
+#playlist-play{
+	float: left;
+}
