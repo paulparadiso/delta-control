@@ -1,4 +1,4 @@
-$def with(header, nav, playlists)
+$def with(header, nav, playlists, cues)
 $:header
 $:nav
 
@@ -14,16 +14,43 @@ $:nav
 			Edit
 		</div>
 	</div>
-	<div id="edit-button">
-		<img src="static/img/new_playlist.png">
-	</div>
-	$for i in playlists:
-		$ div_id = i.replace(' ','-')
-		<div id="$div_id" class="top-bordered">
-			<img onclick="openPlaylist('$div_id')" src="static/img/plus.png"></img>
-			$i
-			<img src="static/img/edit.png"></img>
+	<div id="playlist-view" style="display:''">
+		<div id="edit-button">
+			<img src="static/img/new_playlist.png">
 		</div>
+		$ playlist_keys = playlists.keys()
+		$for i in playlist_keys:
+			$ div_id = i.replace(' ','-')
+			<div id="$div_id" class="top-bordered">
+				<img onclick="openPlaylist('$div_id')" src="static/img/plus.png"></img>
+				$i
+				<img onclick="editPlaylist($i)" src="static/img/edit.png"></img>
+				$ content_div_id = div_id + '-content'
+				<div id="$content_div_id" style="display:none;">
+					$ cues = playlists[i]
+					$for j in cues:
+						$j <br>
+				</div>
+			</div>
+	</div>
+	<div id="edit-view" style="display:none;">
+		<div id="playlist-namer">
+			<input type="text" name="new-playlist-name">
+			<div id="playlist-name-save" class="edit-item edit-buttons">save</div>
+			<div id="playlist-name-cancel" class="edit-item edit-buttons">cancel</div>
+		</div>
+		<br>
+		<div id="cue-selector">
+			<select id="cue-dropdown">
+				$for j in cues:
+					<option value="$j">$j</option>
+			</select>
+			<div onclick="addCue()" id="cue-add" class="edit-item edit-buttons">add</div>
+		</div>
+		<div id="playlist-creator">
+			fodder
+		</div>
+	</div>
 </body>
 </div>
 </div>

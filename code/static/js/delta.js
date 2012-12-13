@@ -15,19 +15,27 @@ function sendPlaylist(){
 }
 
 function swapTab(currentTab){
-	oldTab = '';
-	newTab = '';
+	var oldTab = '';
+	var newTab = '';
+	var oldDiv = '';
+	var newDiv = '';
 	if(currentTab == 'view'){
 		oldTab = '#edit-tab';
 		newTab = '#view-tab';
+		oldDiv = '#edit-view'
+		newDiv = '#playlist-view'
 	} else if(currentTab == 'edit'){
 		oldTab = '#view-tab';
 		newTab = '#edit-tab';
+		oldDiv = '#playlist-view'
+		newDiv = '#edit-view'
 	}
 	$(oldTab).removeClass('active-tab');
 	$(oldTab).addClass('inactive-tab');
+	$(oldDiv).css('display','none')
 	$(newTab).removeClass('inactive-tab');
 	$(newTab).addClass('active-tab');
+	$(newDiv).css('display','');
 }
 
 function openPlaylist(plist){
@@ -37,7 +45,11 @@ function openPlaylist(plist){
 	var imgSrc = $(plistImg).first().attr('src');
 	if(imgSrc == plusSrc){
 		$(plistImg).first().attr('src', minusSrc);
+		var cueDiv = '#' + plist + '-content';
+		$(cueDiv).css('display','');
 	} else {
 		$(plistImg).first().attr('src', plusSrc);
+		var cueDiv = '#' + plist + '-content';
+		$(cueDiv).css('display','none');
 	}
 }

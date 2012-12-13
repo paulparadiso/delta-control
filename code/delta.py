@@ -1,5 +1,6 @@
 import web
 import redis
+import json
 
 urls = (
 	'/', 'Index',
@@ -30,11 +31,17 @@ class Playlists:
 	def GET(self):
 		header = render.header()
 		nav = render.nav()
-		playlists = []
+		playlists = {}
 		playlist_keys = redis.keys('playlist:*')
+		cues = []
+		cue_keys = redis.keys('cue:*')
+		for i in cue_keys:
+			cues.append(i.split(':')[1])
 		for i in playlist_keys:
-			playlists.append(i.split(':')[1])
-		return render.playlists(header, nav, playlists)
+			playlist_name = i.split(':')[1]
+			playlist = json.loads(redis.get(i))
+			playlists[playlist_name] = playlist
+		return render.playlists(header, nav, playlists, cues)
 		
 class Command:
 	

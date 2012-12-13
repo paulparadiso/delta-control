@@ -54,3 +54,33 @@ body{
 .power-button{
 	float: left;
 }
+
+#name-container{
+	width: 100%;
+}
+
+#playlist-namer{
+	width: 100%;
+}
+
+#cue-selector{
+	width: 50%;
+}
+
+#playlist-creator{
+	width: 50%;
+	border: 1px solid black;
+	float: left;
+}
+
+.edit-buttons{
+	width: 100px;
+	height: 25px;
+	border: 1px black solid;
+	padding-left: 20px;
+	margin-left: 20px;
+}
+
+.edit-item{
+	float: left;
+}
