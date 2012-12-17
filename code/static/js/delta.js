@@ -1,3 +1,19 @@
+var editorMode = 'name';
+var currentPlaylistName = '';
+var currentPlaylist = new Array();
+
+function setCurrentPlaylistName(name){
+	currentPlaylistName = name;
+}
+
+function addToCurrentPlaylist(item){
+	currentPlaylist.push(item);
+}
+
+function clearCurrentPlaylist(){
+	currentPlaylist = new Array();
+}
+
 function sendCmd(cmdType, command){
 	//alert(command + " pressed.");
 	$.ajax({
@@ -52,4 +68,28 @@ function openPlaylist(plist){
 		var cueDiv = '#' + plist + '-content';
 		$(cueDiv).css('display','none');
 	}
+}
+
+function addCue(cue){
+	var cueDropdown = document.getElementById("cue-dropdown")
+	var cue = cueDropdown.options[cueDropdown.selectedIndex].value;
+	currentPlaylist.push(cue);
+	populatePlaylist();
+}
+
+function removeCue(cue){
+	var cueIndex = parseInt(cue);
+	currentPlaylist.splice(cueIndex,1);
+	populatePlaylist();
+} 
+
+function populatePlaylist(){
+	var playlistHTML = ''
+	for(var i = 0; i < currentPlaylist.length; i++){
+		var cueIndex = i.toString();
+		playlistHTML += "<div class='cue-item'>" + currentPlaylist[i] + 
+		"</div><div onclick='removeCue(" + cueIndex + ")' class='cue-remove'>x</div>"	;
+	}
+	$('#playlist-creator').html(playlistHTML);
+
 }
