@@ -93,3 +93,9 @@ function populatePlaylist(){
 	$('#playlist-creator').html(playlistHTML);
 
 }
+
+function activateRenamePlaylist(){
+	$('#playlist-name-readout').css('display','none');
+	$('#playlist-name-input').css('display','');
+	$('#playlist-name-rename').css('visibility','hidden');
+}

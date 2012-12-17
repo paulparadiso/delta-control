@@ -35,7 +35,12 @@ $:nav
 	</div>
 	<div id="edit-view" style="display:none;">
 		<div id="edit-left" class="edit-column">
-			<input type="text" name="new-playlist-name">
+			<div id="playlist-name-input">
+				<input type="text" name="new-playlist-name" style="display:none;">
+			</div>
+			<div id="playlist-name-readout" style="display:'';">
+				Playlist Name
+			</div>
 			<div id="cue-selector">
 				<select id="cue-dropdown">
 					$for j in cues:
@@ -46,7 +51,7 @@ $:nav
 		</div>
 		<div id="edit-right" class="edit-column">
 			<div id="playlist-namer">
-				<div onclick="renamePlaylist()" id="playlist-name-rename" class="edit-item edit-buttons">rename</div>
+				<div onclick="activateRenamePlaylist()" id="playlist-name-rename" class="edit-item edit-buttons" style="visibility:visible;">rename</div>
 				<div onclick="savePlaylist" id="playlist-name-save" class="edit-item edit-buttons">save</div>
 				<div onclick="cancelEdit()" id="playlist-name-cancel" class="edit-item edit-buttons">cancel</div>
 			</div>
