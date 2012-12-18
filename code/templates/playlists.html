@@ -2,7 +2,7 @@ $def with(header, nav, playlists, cues)
 $:header
 $:nav
 
-<div id="playlists-page">
+<div id="playlists-page" class="sub-page">
 	<div id="playlists" class="top-bordered">
 		<span class="page-label">Current Playlists</span>
 	</div>
@@ -35,10 +35,10 @@ $:nav
 	</div>
 	<div id="edit-view" style="display:none;">
 		<div id="edit-left" class="edit-column">
-			<div id="playlist-name-input">
-				<input type="text" name="new-playlist-name" style="display:none;">
+			<div id="playlist-name-input" style="display:none">
+				<input type="text" id="new-playlist-name">
 			</div>
-			<div id="playlist-name-readout" style="display:'';">
+			<div id="playlist-name-readout" style="display:''">
 				Playlist Name
 			</div>
 			<div id="cue-selector">
@@ -46,13 +46,14 @@ $:nav
 					$for j in cues:
 						<option value="$j">$j</option>
 				</select>
-				<div onclick="addCue()" id="cue-add" class="edit-item edit-buttons">add</div>
+				<div onclick="addCue()" id="cue-add" class="edit-item edit-buttons" style="display:'';">add</div>
+				<div onclick="insertCue()" id="cue-insert" class="edit-item edit-buttons" style="display:none;">insert</div>
 			</div>
 		</div>
 		<div id="edit-right" class="edit-column">
 			<div id="playlist-namer">
 				<div onclick="activateRenamePlaylist()" id="playlist-name-rename" class="edit-item edit-buttons" style="visibility:visible;">rename</div>
-				<div onclick="savePlaylist" id="playlist-name-save" class="edit-item edit-buttons">save</div>
+				<div onclick="savePlaylist()" id="playlist-name-save" class="edit-item edit-buttons">save</div>
 				<div onclick="cancelEdit()" id="playlist-name-cancel" class="edit-item edit-buttons">cancel</div>
 			</div>
 			<div id="playlist-creator">

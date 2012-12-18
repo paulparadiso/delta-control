@@ -7,6 +7,7 @@ urls = (
 	'/master', 'Index',
 	'/control','Command',
 	'/playlists','Playlists',
+	'/scheduling','Scheduling',
 )
 
 redis = redis.Redis('localhost')
@@ -25,6 +26,13 @@ class Index:
 		for i in playlist_keys:
 			playlists.append(i.split(':')[1])
 		return render.master(header, nav, playlists)
+
+class Scheduling:
+
+	def GET(self):
+		header = render.header()
+		nav = render.nav()
+		return render.scheduling(header, nav)
 
 class Playlists:
 

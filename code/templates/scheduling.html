@@ -1,0 +1,47 @@
+$def with(header, nav)
+$:header
+$:nav
+
+<div id="scheduling page" class="sub-page">
+	<div id="scheduling" class="top-bordered" style="width:100%;">
+		<span class="page-label">Scheduling</span>
+	</div>
+	<div id="scheduling-content">
+		<div id="scheduling-calendar" class="scheduling-column">
+			Date
+		</div>
+		<div id="scheduling-playlists" class="scheduling-column">
+			Time
+			<br>
+			<div id="timeline-holder">
+			$for i in range(0,24):
+				<div class="sch-div-main">
+					<div class="sch-div-sub" style="top:-1px">
+					</div>
+					<div class="sch-div-sub" style="top:20px">
+					</div>
+					<div class="sch-div-sub" style="top:41px">
+					</div>
+					<div class="sch-div-sub" style="top:62px">
+					</div>
+					<div class="sch-div-hour" style="top:0px">
+					<h1>$i</h1>
+					</div>
+					<div class="sch-div-min" style="top:-1px">
+						:00
+					</div>
+					<div class="sch-div-min" style="top:20px">
+						:15
+					</div>
+					<div class="sch-div-min" style="top:41px">
+						:30
+					</div>
+					<div class="sch-div-min" style="top:62px">
+						:45
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
