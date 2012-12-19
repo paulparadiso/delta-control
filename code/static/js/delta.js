@@ -5,6 +5,90 @@ var bRename = false;
 var oldPlaylistName = '';
 var highlightedCue = 0;
 var bHaveHighlightedCue = false;
+var playlistList = '';
+var bHaveOpenPlaylist = false;
+
+function init(){
+	$.ajax({
+		url:'getplaylists',
+		type:'GET',
+		success: function(data){
+			playlistList = eval(data);
+		}
+	})
+}
+
+function initDatepicker(){
+	$(function() {
+        $( "#datepicker" ).datepicker({
+			onSelect: function(date){
+				updateScheduler(date);
+			}
+		})
+	});
+}
+
+function updateScheduler(date){
+	$.ajax({
+		url:'submitdate',
+		type:'GET',
+		data:{date:date},
+		success: function(data){
+			loadScheduler(data);
+		}
+	})
+}
+
+function loadScheduler(data){
+	var playlists = eval('(' + data + ')');
+	for(var p in playlists){
+		if(playlists.hasOwnProperty(p)){
+			var hour = "." + p.split(':')[0];
+			var min = "." + p.split(':')[1];
+			var playlist = playlists[p];
+			$(hour + ' > ' + min).html(playlist);
+		}
+	}
+}
+
+function openPlaylistList(div){
+	var listDiv = "#" + div;
+	var plistDiv = listDiv + "-plist"
+	var divState = $(listDiv).css('display');
+	if(divState == 'none'){	
+		if(bHaveOpenPlaylist){
+			return;
+		}
+		$(listDiv).css('display','');
+		var playlistHTML = '';
+		for(var p in playlistList){
+			playlistHTML += "<div onclick='setPlaylist(" 
+							+ playlistList[p] + ", " 
+							+ plistDiv +  ") " 
+							+ "onmouseover='playlistHoverOn(" + plistDiv + ") " 
+							+ "onmouseout='playlistHoverOff(" + plistDiv + ") " 
+							+ "class='playlist-block'>" 
+							+ playlistList[p] + "</div>";
+		}
+		$(listDiv).html(playlistHTML);
+		bHaveOpenPlaylist = true;
+	} else {
+		$(listDiv).css('display','none');
+		bHaveOpenPlaylist = false;
+	}
+}
+
+function setPlaylist(plist, plistDiv){
+	alert(plist);
+}
+
+function playlistHoverOn(plistDiv){
+	$('#' + plistDiv).addClass('plist-item-hover');
+}
+
+function playlistHoverOff(plistDiv){
+	$('#' + plistDiv).removeClass('plist-item-hover');
+}
 
 function setCurrentPlaylistName(name){
 	currentPlaylistName = name;

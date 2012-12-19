@@ -8,22 +8,45 @@ $:nav
 	</div>
 	<div id="scheduling-content">
 		<div id="scheduling-calendar" class="scheduling-column">
-			Date
-			<div id="datepicker"></div>
+			<script type="text/javascript">
+				initDatepicker();
+			</script>
+			<p>Date: <input type="text" id="datepicker" /></p>
+			<!--<div id="datepicker"></div>-->
 		</div>
 		<div id="scheduling-playlists" class="scheduling-column">
 			Time
 			<br>
 			<div id="timeline-holder">
 			$for i in range(0,24):
-				<div class="sch-div-main">
-					<div class="sch-div-sub" style="top:-1px">
+				<div class="sch-div-main $i">
+					$code:
+						div_id = "%d-00" % (i)
+						plist = div_id + "-plist"
+					<div onclick="openPlaylistList('$div_id')" class="sch-div-sub 00" style="top:-1px">
+						<div id="$div_id" class="playlist-list" style="display:none">
+						</div>
 					</div>
-					<div class="sch-div-sub" style="top:20px">
+					$code:
+						div_id = "%d-15" % (i)
+						plist = div_id + "-plist"
+					<div onclick="openPlaylistList('$div_id')" class="sch-div-sub 15" style="top:20px">
+						<div id="$div_id" class="playlist-list" style="display:none">
+						</div>
 					</div>
-					<div class="sch-div-sub" style="top:41px">
+					$code:
+						div_id = "%d-30" % (i)
+						plist = div_id + "-plist"
+					<div onclick="openPlaylistList('$div_id')" class="sch-div-sub 30" style="top:41px">
+						<div id="$div_id" class="playlist-list" style="display:none">
+						</div>
 					</div>
-					<div class="sch-div-sub" style="top:62px">
+					$code:
+						div_id = "%d-45" % (i)
+						plist = div_id + "-plist"
+					<div onclick="openPlaylistList('$div_id')" class="sch-div-sub 45" style="top:62px">
+						<div id="$div_id" class="playlist-list" style="display:none">
+						</div>
 					</div>
 					<div class="sch-div-hour" style="top:0px">
 					<h1>$i</h1>

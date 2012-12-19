@@ -3,6 +3,18 @@ body{
 	height:100%;
 }
 
+
+#ui-datepicker-div {
+//    position: fixed;
+//    width: 100px;
+//    height: 100px;
+//    top: 50%;
+//    left: 50%;
+    margin-top: 0px;
+    margin-left: -80px;
+ }
+
+
 .top-bordered{
 	width: 100%;
 	border-top: 1px black solid;
@@ -29,6 +41,7 @@ body{
 	width: 225px;
 	height: 20px;
 	border: 1px solid black;
+	text-align: left;
 }
 
 .sch-div-hour{
@@ -47,6 +60,17 @@ body{
 	height: 20px;	
 }
 
+.playlist-list{
+	width:100%;
+	z-index: 10000;
+	background-color: #aaa;
+	margin-top: 20px;
+}
+
+.plist-item-hover{
+	background-color: blue;
+}
+
 #timeline-holder{
 	width: 100%;
 	height: 600px;
@@ -55,7 +79,7 @@ body{
 
 .playback-control{
 	float: left;
-	#border-bottom: 1px black solid;
+	//border-bottom: 1px black solid;
 }
 
 .sub-page{

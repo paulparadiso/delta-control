@@ -8,6 +8,8 @@ urls = (
 	'/control','Command',
 	'/playlists','Playlists',
 	'/scheduling','Scheduling',
+	'/submitdate', 'Date',
+	'/getplaylists', 'GetPlaylists',
 )
 
 redis = redis.Redis('localhost')
@@ -72,6 +74,32 @@ class Command:
 	def _set_power(self, cmd):
 		print "setting power to - " + cmd
 		
+class Date:
+
+	def GET(self):
+		params = web.input()
+		date = params.date
+		date_key = 'scheduledItem:' + date + ':*'
+		scheduled_keys = redis.keys(date_key)
+		scheduled_items = {}
+		for i in scheduled_keys:
+			split_key = i.split(':')
+			hour = split_key[2]
+			minute = split_key[3]
+			playlist = redis.get(i)
+			scheduled_items[hour + ':' + minute] = playlist
+		return json.dumps(scheduled_items)
+
+class GetPlaylists:
+
+	def GET(self):
+		playlists = []
+		playlist_keys = redis.keys('playlist:*')
+		for i in playlist_keys:
+			playlists.append(i.split(':')[1])
+		print playlists
+		return json.dumps(playlists)
+
 if __name__ == "__main__":	
 	app = web.application(urls, globals())
 	app.run()
