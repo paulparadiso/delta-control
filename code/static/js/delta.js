@@ -15,7 +15,9 @@ function init(){
 		success: function(data){
 			playlistList = eval(data);
 		}
-	})
+	});
+	$('.default').dropkick();
+	Cufon.replace('h1');
 }
 
 function initDatepicker(){
