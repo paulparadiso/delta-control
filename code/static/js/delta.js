@@ -200,7 +200,7 @@ function loadClips(){
 			for(var key in cueList){
 				var markers = cueList[key].split(":");
 				var cueName = key.split(":")[1];
-				cueHTML += "<b>" + cueName + "</b><br>" + "<span style='float:right;'><img src='static/img/edit.png'></img></span>"
+				cueHTML += "<b>" + cueName + "</b>" + "<span style='float:right;'><img src='static/img/edit.png'></img></span><br>" +
 				"<span style='margin-left:10px;'><b>Ribbon: </b>" + markers[0] + "</span><br>" +
 				"<span style='margin-left:10px;'><b>Concierge: </b>" + markers[1] + "</span><br><br>";
 			}
