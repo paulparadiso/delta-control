@@ -12,6 +12,8 @@ urls = (
 	'/getplaylists', 'GetPlaylists',
 	'/clips','Clips',
 	'/getclips','GetClips',
+	'/clearplaylists', 'ClearPlaylists',
+	'/clearcues', 'ClearCues',
 )
 
 redis = redis.Redis('localhost')
@@ -67,6 +69,7 @@ class Clips:
 		clipName = params.clipName
 		ribbonCue = params.ribbonCue
 		conciergeCue = params.conciergeCue
+		redis.delete('cue:' + clipName);
 		redis.set("cue:" + clipName, ribbonCue + ':' + conciergeCue)
 
 class Command:
@@ -122,9 +125,24 @@ class GetClips:
 		cues = {}
 		cue_keys = redis.keys('cue:*')
 		for i in cue_keys:
-			cues[i] = redis.get(i)
+			cueName = i.split(':')[1]
+			cues[cueName] = redis.get(i)
 		print cues
 		return json.dumps(cues)
+
+class ClearPlaylists:
+
+	def GET(self):
+		playlist_keys = redis.keys('playlist:*')
+		for i in playlist_keys:
+			redis.delete(i)
+
+class ClearCues:
+
+	def GET(self):
+		cue_keys = redis.keys('cue:*')
+		for i in cue_keys:
+			redis.delete(i)
 
 if __name__ == "__main__":	
 	app = web.application(urls, globals())

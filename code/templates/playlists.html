@@ -3,22 +3,27 @@ $:header
 $:nav
 
 <div id="playlists-page" class="sub-page">
+	<script type="text/javascript">
+		loadClips();
+	</script>
 	<div id="playlists" style="margin-left:50px;">
 		<span class="page-label"><h2 class="page-label"><b>Current Playlists</b></h2></span>
 	</div>
+	<!--
 	<div id="view-edit-tabs" style="margin-left:50px;">
-		<span onclick="swapTab('view')" id="view-tab" class="tab active-tab">
+		<span onclick="swapPlaylistTab('view')" id="view-tab" class="tab active-tab">
 			<b>View</b>
 		</span>
-		<span onclick="swapTab('edit')" id="edit-tab" class="tab inactive-tab">
+		<span onclick="swapPlaylistTab('edit')" id="edit-tab" class="tab inactive-tab">
 			<b>Edit</b>
 		</span>
 		<span style="margin-top:-1px; display: block; float: left; margin-left: 201px; width:342px; border-bottom: 1px solid black;">
 		</span>
 	</div>
+	-->
 	<div id="playlist-view" style="display:''; margin-left:50px;">
 		<div id="edit-button" style="padding-left: 410px;">
-			<img src="static/img/new_playlist.png">
+			<img src="static/img/new_playlist.png" onclick="newPlaylist()">
 		</div>
 		$ playlist_keys = playlists.keys()
 		$for i in playlist_keys:
@@ -26,7 +31,7 @@ $:nav
 			<div id="$div_id" class="top-bordered">
 				<img onclick="openPlaylist('$div_id')" src="static/img/plus.png"></img>
 				<b>$i</b>
-				<img style="padding-left:350px; padding-top:15px;" onclick="editPlaylist($i)" src="static/img/edit.png"></img>
+				<img style="padding-left:350px; padding-top:15px;" onclick="editPlaylist('$i')" src="static/img/edit.png"></img>
 				$ content_div_id = div_id + '-content'
 				<div id="$content_div_id" style="display:none;">
 					$ cues = playlists[i]
@@ -40,22 +45,24 @@ $:nav
 	<div id="edit-view" style="display:none; margin-left:50px;">
 		<div id="edit-left" class="edit-column">
 			<div id="playlist-name-input" style="display:none">
-				<input type="text" id="new-playlist-name">
+				Enter Playlist Name<br>
+				<input type="text" id="new-playlist-name" class="new-clip-input">
 			</div>
 			<div id="playlist-name-readout" style="display:''">
 				Playlist Name
 			</div>
 			<div id="cue-selector">
-				<span>
-					<select id="cue-dropdown" class="default">
+				<span style="margin-top:10px;">
+					<select id="cue-dropdown" class="default" style="width:150px;">
+						<option value="__IGNORE__">Select Clip</option>
+						<!--
 						$for j in cues:
 							<option value="$j">$j</option>
+						-->
 					</select>
 				</span>
-				<!--
 				<span onclick="addCue()" id="cue-add" style="display:'';"><img src="static/img/add.png"></img></span>
 				<span onclick="insertCue()" id="cue-insert" style="display:none;"><img src="static/img/insert.png"></img></span>
-				-->
 			</div>
 		</div>
 		<div id="edit-right" class="edit-column">
