@@ -17,7 +17,7 @@ function init(){
 		}
 	});
 	$('.default').dropkick();
-	Cufon.replace('h1');
+	//Cufon.replace('.hp-text');
 }
 
 function initDatepicker(){
@@ -51,6 +51,10 @@ function loadScheduler(data){
 			$(hour + ' > ' + min).html(playlist);
 		}
 	}
+}
+
+function navClicked(nav){
+	$('.')
 }
 
 function openPlaylistList(div){
@@ -120,7 +124,7 @@ function sendPlaylist(){
 	sendCmd('playlist',selectedPlaylist);
 }
 
-function swapTab(currentTab){
+function swapPlaylistTab(currentTab){
 	var oldTab = '';
 	var newTab = '';
 	var oldDiv = '';
@@ -142,6 +146,71 @@ function swapTab(currentTab){
 	$(newTab).removeClass('inactive-tab');
 	$(newTab).addClass('active-tab');
 	$(newDiv).css('display','');
+}
+
+function editClip(b){
+	if(b == "true"){
+		$('#clips-view').css('display','none');
+		$('#clips-edit-view').css('display','');
+		$('#new-clip-name').val("");
+		$('#new-clip-ribbon').val("");
+		$('#new-clip-concierge').val("");
+	} else {
+		loadClips();
+		$('#clips-view').css('display','');
+		$('#clips-edit-view').css('display','none')
+	}
+}
+
+function saveClip(){
+	var clipName = $('#new-clip-name').val();
+	if(clipName == ''){
+		alert("Please enter a name for the clip.");
+		return;
+	}
+	var ribbonCue = $('#new-clip-ribbon').val();
+	if(ribbonCue == ''){
+		alert("Please enter a ribbon cue.")
+		return;
+	}
+	var conciergeCue = $('#new-clip-concierge').val();
+	if(conciergeCue == ''){
+		alert("Please enter a concierge cue.")
+		return;
+	}
+	$.ajax({
+		url:'clips',
+		type:'POST',
+		data:{clipName:clipName,ribbonCue:ribbonCue,conciergeCue:conciergeCue},
+		success:function(data){
+			loadClips();
+			editClip('false');
+		}
+	});
+}
+
+function loadClips(){
+	$.ajax({
+		url:'getclips',
+		type:'GET',
+		success:function(data){
+			var cueList = JSON.parse(data);
+			var cueHTML = "";
+			//alert(cueList[]);
+			for(var key in cueList){
+				var markers = cueList[key].split(":");
+				var cueName = key.split(":")[1];
+				cueHTML += "<b>" + cueName + "</b><br>" + "<span style='float:right;'><img src='static/img/edit.png'></img></span>"
+				"<span style='margin-left:10px;'><b>Ribbon: </b>" + markers[0] + "</span><br>" +
+				"<span style='margin-left:10px;'><b>Concierge: </b>" + markers[1] + "</span><br><br>";
+			}
+			$('#view-clips').html(cueHTML);
+		}
+	})
+}
+
+function swapClipsTab(currentTab){
+
 }
 
 function openPlaylist(plist){
@@ -188,13 +257,15 @@ function populatePlaylist(){
 		var cueIndex = i.toString();
 		var cueId = "cue-" + cueIndex;
 		playlistHTML += "<div onclick='toggleHighlight(" + i + ")' id='" + cueId + "' class='cue-item'>" + currentPlaylist[i] + 
-		"</div><div onclick='removeCue(" + cueIndex + ")' class='cue-remove'>x</div>"	;
+		"</div><div onclick='removeCue(" + cueIndex + ")' class='cue-remove'><img src='static/img/remove.png'></img></div>"	;
 	}
 	$('#playlist-creator').html(playlistHTML);
 
 }
 
 function activateRenamePlaylist(){
+	var name = $('#playlist-name-readout').html();
+	alert("changing name of " + name);
 	$('#playlist-name-readout').css('display','none');
 	$('#playlist-name-input').css('display','');
 	$('#playlist-name-rename').css('visibility','hidden');

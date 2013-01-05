@@ -10,6 +10,8 @@ urls = (
 	'/scheduling','Scheduling',
 	'/submitdate', 'Date',
 	'/getplaylists', 'GetPlaylists',
+	'/clips','Clips',
+	'/getclips','GetClips',
 )
 
 redis = redis.Redis('localhost')
@@ -21,7 +23,7 @@ class Index:
 
 	def GET(self):
 		header = render.header()
-		nav = render.nav()
+		nav = render.nav('master')
 		playlist_keys = redis.keys('playlist:*')
 		#playlists = ['test1','test2','test3','test4','test5']
 		playlists = []
@@ -33,14 +35,14 @@ class Scheduling:
 
 	def GET(self):
 		header = render.header()
-		nav = render.nav()
+		nav = render.nav('scheduling')
 		return render.scheduling(header, nav)
 
 class Playlists:
 
 	def GET(self):
 		header = render.header()
-		nav = render.nav()
+		nav = render.nav('playlists')
 		playlists = {}
 		playlist_keys = redis.keys('playlist:*')
 		cues = []
@@ -53,6 +55,20 @@ class Playlists:
 			playlists[playlist_name] = playlist
 		return render.playlists(header, nav, playlists, cues)
 		
+class Clips:
+
+	def GET(self):
+		header = render.header()
+		nav = render.nav('clips')
+		return render.clips(header, nav)
+
+	def POST(self):
+		params = web.input()
+		clipName = params.clipName
+		ribbonCue = params.ribbonCue
+		conciergeCue = params.conciergeCue
+		redis.set("cue:" + clipName, ribbonCue + ':' + conciergeCue)
+
 class Command:
 	
 	def POST(self):
@@ -99,6 +115,16 @@ class GetPlaylists:
 			playlists.append(i.split(':')[1])
 		print playlists
 		return json.dumps(playlists)
+
+class GetClips:
+
+	def GET(self):
+		cues = {}
+		cue_keys = redis.keys('cue:*')
+		for i in cue_keys:
+			cues[i] = redis.get(i)
+		print cues
+		return json.dumps(cues)
 
 if __name__ == "__main__":	
 	app = web.application(urls, globals())

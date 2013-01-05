@@ -1,0 +1,54 @@
+$def with(header, nav)
+$:header
+$:nav
+
+<div id="clips-page" class="sub-page">
+	<div id="clips" style="margin-left:50px;">
+		<span class="page-label"><h2 class="page-label"><b>Current Clip Names</b></h2></span>
+	</div>
+	<div id="view-edit-clips-tabs" style="margin-left:50px;">
+		<span onclick="swapClipsTab('view')" id="view-tab" class="tab active-tab">
+			<b>View</b>
+		</span>
+		<span onclick="swapClipsTab('edit')" id="edit-tab" class="tab inactive-tab">
+			<b>Edit</b>
+		</span>
+		<span style="margin-top:-1px; display: block; float: left; margin-left: 201px; width:342px; border-bottom: 1px solid black;">
+		</span>
+	</div>
+	<div id="clips-view" style="display:''; margin-left:50px; margin-top:70px;">
+		<div id="view-clips-left" class="edit-column">			
+			<div id="view-clips">
+			</div>
+		</div>
+		<div id="view-clips-right" class="edit-column">
+			<span style="float:right;" onclick="editClip('true')">
+				<img src="static/img/add_clip.png"></img>
+			</span>
+		</div>
+	</div>
+	<div id="clips-edit-view" style="display:none; margin-left:50px; margin-top:70px;">
+		<div id="new-clip-left" class="edit-column">
+			Enter New Name<br>
+			<input type="text" value="" class="new-clip-input" id="new-clip-name"></input>
+			<br>
+			Enter New Ribbon Marker<br>
+			<input type="text" value="" class="new-clip-input" id="new-clip-ribbon"></input>
+			<br>
+			Enter New Concierge Marker<br>
+			<input type="text" value="" class="new-clip-input" id="new-clip-concierge"></input>
+		</div>
+		<div id="new-clip-right" class="edit-column">
+			<span style="float:right;" onclick="editClip('false')">
+				<img src="static/img/cancel.png"></img>
+			</span>
+			<span style="float:right;padding-right:20px;" onclick="saveClip()">
+				<img src="static/img/save.png"></img>
+			</span>
+		</div>
+	</div>
+	<div id="new-clip-view" style="display:none; margin-left:50px;">
+	</div>
+</body>
+</div>
+</div>

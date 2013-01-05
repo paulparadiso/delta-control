@@ -1,8 +1,71 @@
+@font-face { font-family: HPSimplified; src: url('../fonts/HPSimplified_Rg.ttf'); } 
+@font-face { font-family: HPSimplified; font-weight: bold; src: url('../fonts/HPSimplified_Bd.ttf'); }
+
 body{
 	width:100%;
 	height:100%;
 }
 
+h1{
+	font-family: HPSimplified;
+}
+
+a{
+	text-decoration: none;
+}
+
+.hp-text{
+	font-family: HPSimplified;	
+}	
+
+.dk_toggle{
+	width:150px;
+}
+
+.pad-left{
+	margin-left: 50px;
+}
+
+.label{
+	margin-left:50px; 
+	padding-top: 10px;
+	margin-bottom:20px;
+}
+
+#nav{
+}
+
+.nav-item{
+	margin-left: 20px;
+	float: left;
+	height: 25px;
+}
+
+.active-nav{
+	color: #000;
+	border-bottom:4px solid #0096d6;
+}
+
+.active-nav a{
+	color: #000;
+}
+
+.inactive-nav{
+	color: #87898b;
+	border:0px;
+}
+
+.inactive-nav a{
+	color: #87898b;
+}
+
+.page-label{
+	color:#0096d6;
+}
+
+.control-item{
+	padding-left: 70px;
+}
 
 #ui-datepicker-div {
 //    position: fixed;
@@ -17,7 +80,15 @@ body{
 .top-bordered{
 	width: 100%;
 	border-top: 1px black solid;
-	overflow: auto;
+	overflow: visible;
+}
+
+.sub-page{
+	width: 800px;
+}
+
+#master{
+	height: 25px;
 }
 
 .scheduling-column{
@@ -78,11 +149,7 @@ body{
 
 .playback-control{
 	float: left;
-	//border-bottom: 1px black solid;
-}
-
-.sub-page{
-	width: 800px;
+	text-align: center;
 }
 
 .active-tab{
@@ -108,10 +175,17 @@ body{
 	float: left;
 	width: 100px;
 	height: 25px;
+	text-align: center;
+	padding-top: 5px;
 }
 
 #playlist-select{
 	float: left;
+}
+
+.playlist-open-item{
+	margin-left: 19px;
+	color: #007dba;
 }
 
 #playlist-play{
@@ -137,7 +211,7 @@ body{
 #playlist-creator{
 	width: 100%;
 	height: 400px;
-	border: 1px solid black;
+	//border: 1px solid black;
 	float: left;
 	overflow: scroll;
 }
@@ -145,10 +219,6 @@ body{
 .cue-item{
 	width: 100px;
 	float: left
-}
-
-.cue-remove{
-	border:1px solid black;
 }
 
 .edit-buttons{
@@ -171,4 +241,12 @@ body{
 
 .highlighted{
 	background-color:rgb(150,150,150);
+}
+
+.new-clip-input{
+	width: 300px;
+	height: 30px;
+	font-family: HPSimplified;
+	font-size: 18px;
+	margin-bottom: 10px;
 }
