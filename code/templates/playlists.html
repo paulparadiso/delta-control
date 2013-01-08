@@ -6,7 +6,7 @@ $:nav
 	<script type="text/javascript">
 		loadClips();
 	</script>
-	<div id="playlists" style="margin-left:50px;">
+	<div id="playlists" class="label">
 		<span class="page-label"><h2 class="page-label"><b>Current Playlists</b></h2></span>
 	</div>
 	<!--
@@ -22,16 +22,16 @@ $:nav
 	</div>
 	-->
 	<div id="playlist-view" style="display:''; margin-left:50px;">
-		<div id="edit-button" style="padding-left: 410px;">
-			<img src="static/img/new_playlist.png" onclick="newPlaylist()">
+		<div id="edit-button" class="bottom-bordered" style="padding-bottom:48px;">
+			<img style="float:right;" src="static/img/new_playlist.png" onclick="newPlaylist()">
 		</div>
 		$ playlist_keys = playlists.keys()
 		$for i in playlist_keys:
 			$ div_id = i.replace(' ','-')
-			<div id="$div_id" class="top-bordered">
-				<img onclick="openPlaylist('$div_id')" src="static/img/plus.png"></img>
+			<div id="$div_id" class="bottom-bordered" style="padding-bottom:18px;">
+				<img  style="padding-top:20px;" onclick="openPlaylist('$div_id')" src="static/img/plus.png"></img>
 				<b>$i</b>
-				<img style="padding-left:350px; padding-top:15px;" onclick="editPlaylist('$i')" src="static/img/edit.png"></img>
+				<img style="padding-left:350px; padding-top:15px; float:right;" onclick="editPlaylist('$i')" src="static/img/edit.png"></img>
 				$ content_div_id = div_id + '-content'
 				<div id="$content_div_id" style="display:none;">
 					$ cues = playlists[i]
@@ -43,36 +43,39 @@ $:nav
 			</div>
 	</div>
 	<div id="edit-view" style="display:none; margin-left:50px;">
-		<div id="edit-left" class="edit-column">
-			<div id="playlist-name-input" style="display:none">
+		<div id="playlist-edit-buttons" style="width:100%; padding-bottom:25px; border-bottom: 1px solid #b9b8bb">	
+			<span id="playlist-name-input" style="display:none">
 				Enter Playlist Name<br>
 				<input type="text" id="new-playlist-name" class="new-clip-input">
-			</div>
-			<div id="playlist-name-readout" style="display:''">
+			</span>
+			<span id="playlist-name-readout" style="visibility:hidden">
 				Playlist Name
-			</div>
-			<div id="cue-selector">
-				<span style="margin-top:10px;">
-					<select id="cue-dropdown" class="default" style="width:150px;">
-						<option value="__IGNORE__">Select Clip</option>
-						<!--
-						$for j in cues:
-							<option value="$j">$j</option>
-						-->
-					</select>
-				</span>
-				<span onclick="addCue()" id="cue-add" style="display:'';"><img src="static/img/add.png"></img></span>
-				<span onclick="insertCue()" id="cue-insert" style="display:none;"><img src="static/img/insert.png"></img></span>
-			</div>
+			</span>
+			<span id="playlist-namer">
+				<span onclick="cancelEdit()" id="playlist-name-cancel"><img src="static/img/cancel.png" style="float:right;"></img></span>
+				<span onclick="savePlaylist()" id="playlist-name-save"><img src="static/img/save.png" style="float:right; padding-right:10px;"></img></span>
+				<span onclick="activateRenamePlaylist()" id="playlist-name-rename" style="visibility:visible; float:right; padding-right:10px;"><img src="static/img/rename.png"></img></span>
+			</span>
 		</div>
-		<div id="edit-right" class="edit-column">
-			<div id="playlist-namer">
-				<span onclick="activateRenamePlaylist()" id="playlist-name-rename" style="visibility:visible;"><img src="static/img/rename.png"></img></span>
-				<span onclick="savePlaylist()" id="playlist-name-save"><img src="static/img/save.png"></img></span>
-				<span onclick="cancelEdit()" id="playlist-name-cancel"><img src="static/img/cancel.png"></img></span>
+		<div style="width:100%;">
+			<div id="edit-left" class="edit-column" style="margin-top:10px;">
+				<div id="cue-selector">
+					<span style="padding-top:10px;">
+						<select id="cue-dropdown" class="default" style="width:150px;">
+							<option value="__IGNORE__">Select Clip</option>
+							<!--
+							$for j in cues:
+								<option value="$j">$j</option>
+							-->
+						</select>
+					</span>
+					<span onclick="addCue()" id="cue-add" style="display:'';"><img src="static/img/add.png"></img></span>
+					<span onclick="insertCue()" id="cue-insert" style="display:none;"><img src="static/img/insert.png"></img></span>
+				</div>
 			</div>
-			<div id="playlist-creator">
-
+			<div id="edit-right" class="edit-column" style="float:right;">
+				<div id="playlist-creator">
+				</div>
 			</div>
 		</div>
 	</div>

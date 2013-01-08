@@ -9,6 +9,7 @@ var playlistList = '';
 var bHaveOpenPlaylist = false;
 var clipList;
 var bEditingClip = false;
+var editedClip;
 
 function init(){
 	$.ajax({
@@ -18,7 +19,7 @@ function init(){
 			playlistList = eval(data);
 		}
 	});
-	$('.default').dropkick();
+	//$('.default').dropkick();
 	//Cufon.replace('.hp-text');
 }
 
@@ -52,6 +53,36 @@ function loadScheduler(data){
 			var playlist = playlists[p];
 			$(hour + ' > ' + min).html(playlist);
 		}
+	}
+}
+
+function saveSchedule(){
+	var date = $('#datepicker').val();
+	if(date == ""){
+		alert("No date selected.");
+		return;
+	}
+	var data = new Object;
+	for(var i = 0; i < 24; i++){
+		for(var j = 0; j < 60; j += 15){
+			var dropdown = "#dd-" + i.toString() + "-" + j.toString();
+			var dropdownVal = $(dropdown).val();
+			if(dropdownVal != ""){
+				//alert(dropdown + " = " + dropdownVal);
+				data[i.toString() + ':' + j.toString()] = dropdownVal;
+			}
+		}
+	}
+	if(!$.isEmptyObject(data)){
+		data['date'] = date;
+		$.ajax({
+			url:'submitschedule',
+			type:'POST',
+			data:data,
+			success:function(data){
+				alert("Schedule successfully saved.")
+			}
+		});
 	}
 }
 
@@ -150,7 +181,21 @@ function swapPlaylistTab(currentTab){
 	$(newDiv).css('display','');
 }
 
+function getPlaylist(plist){
+	$.ajax({
+		url:'getplaylist',
+		type:'GET',
+		data:{playlist:plist},
+		success:function(data){
+			currentPlaylist = JSON.parse(data);
+			currentPlaylistName = plist;
+			populatePlaylist();
+		}
+	})
+}
+
 function editPlaylist(plist){
+	getPlaylist(plist);
 	oldTab = '#view-tab';
 	newTab = '#edit-tab';
 	oldDiv = '#playlist-view'
@@ -163,7 +208,7 @@ function editPlaylist(plist){
 	$(newDiv).css('display','');
 	$('#playlist-name-readout').css('display','');
 	$('#playlist-name-input').css('display','none');
-	$('#playlist-name-rename').css('visibility','');
+	$('#playlist-name-rename').css('visibility','visible');
 	$('#playlist-name-readout').html(plist);
 }
 
@@ -182,7 +227,7 @@ function newPlaylist(){
 	$('#playlist-name-readout').css('display','none');
 	$('#playlist-name-input').css('display','');
 	$('#playlist-name-rename').css('visibility','hidden');
-	loadDropdown();
+	loadClips;
 }
 
 function editClip(clip){
@@ -199,6 +244,7 @@ function editClip(clip){
 		$('#new-clip-name-label').html("Current Name: " + clip);
 		$('#new-clip-ribbon-label').html("Current Ribbon Marker: " + markers[0]);
 		$('#new-clip-concierge-label').html("Current Concierge Marker: " + markers[1]);
+		editedClip = clip;
 	/*
 	}
 	if(b == "true"){
@@ -224,6 +270,7 @@ function addClip(){
 	$('#new-clip-name-label').html("Enter New Name");
 	$('#new-clip-ribbon-label').html("Enter New Ribbon Marker");
 	$('#new-clip-concierge-label').html("Enter New Concierge Marker");
+	loadClips();
 }
 
 function saveClip(){
@@ -249,10 +296,10 @@ function saveClip(){
 	$.ajax({
 		url:'clips',
 		type:'POST',
-		data:{clipName:clipName,ribbonCue:ribbonCue,conciergeCue:conciergeCue},
+		data:{clipName:clipName,ribbonCue:ribbonCue,conciergeCue:conciergeCue,editedClip:editedClip},
 		success:function(data){
 			loadClips();
-			editClip('false');
+			editClip();
 		}
 	});
 }
@@ -273,9 +320,9 @@ function loadClips(){
 					dd.options.add(new Option(key, key));
 				}
 				var markers = clipList[key].split(":");
-				cueHTML += "<b>" + key + "</b>" + "<span style='float:right;'><img src='static/img/edit.png' onclick='editClip(\"" + key + "\")'></img></span><br>" +
+				cueHTML += "<b>" + key + "</b>" + "<div class='bottom-bordered'><span style='float:right;'><img src='static/img/edit.png' onclick='editClip(\"" + key + "\")'></img></span><br>" +
 				"<span style='margin-left:10px;'><b>Ribbon: </b>" + markers[0] + "</span><br>" +
-				"<span style='margin-left:10px;'><b>Concierge: </b>" + markers[1] + "</span><br><br>";
+				"<span style='margin-left:10px;'><b>Concierge: </b>" + markers[1] + "</span><br><br></div>";
 			}
 			$('#view-clips').html(cueHTML);
 		}
@@ -290,11 +337,11 @@ function loadDropdown(){
 	//	alert("dd:" + key)
 	//	dd.options.add(new Option(key, key))
 	//}	
-	alert("dropdown loaded.")
+	//alert("dropdown loaded.")
 	var dd = document.getElementById("cue-dropdown");
 	for(var key in clipList){
 		if(dd){
-			alert(key);
+			//alert(key);
 			dd.options.add(new Option(key, key));
 		}
 	}
@@ -352,8 +399,8 @@ function populatePlaylist(){
 	for(var i = 0; i < currentPlaylist.length; i++){
 		var cueIndex = i.toString();
 		var cueId = "cue-" + cueIndex;
-		playlistHTML += "<div onclick='toggleHighlight(" + i + ")' id='" + cueId + "' class='cue-item'>" + currentPlaylist[i] + 
-		"</div><div onclick='removeCue(" + cueIndex + ")' class='cue-remove'><img src='static/img/remove.png'></img></div>"	;
+		playlistHTML += "<div style='padding-top:10px; padding-bottom:20px; border-bottom:1px solid #b9b8bb;'><span style='padding-top:5px;' onclick='toggleHighlight(" + i + ")' id='" + cueId + "' class='cue-item'>" + currentPlaylist[i] + 
+		"</span><span onclick='removeCue(" + cueIndex + ")' class='cue-remove'><img style='float: right;' src='static/img/remove.png'></img></span><br></div>"	;
 	}
 	$('#playlist-creator').html(playlistHTML);
 
@@ -369,16 +416,26 @@ function activateRenamePlaylist(){
 }
 
 function savePlaylist(){
-	alert("saving playlist.");
+	//alert("saving playlist.");
 	if(bRename){
 		oldPlaylistName = currentPlaylistName;
 		currentPlaylistName = document.getElementById('new-playlist-name').val();
-		alert(currentPlaylistName);
+		//alert(currentPlaylistName);
+	} else {
+		currentPlaylistName = $('#new-playlist-name').val();
+	}
+	if(currentPlaylistName == ""){
+		alert("Please enter a name for the playlist.");
+		return;
+	}
+	var playlistStr = "";
+	for(var i in currentPlaylist){
+		playlistStr += currentPlaylist[i] + ":";
 	}
 	$.ajax({
-		url:'playlist',
+		url:'playlists',
 		type:'POST',
-		data:{name:currentPlaylistName,cmd:command}
+		data:{name:currentPlaylistName,playlist:playlistStr}
 	});
 }
 

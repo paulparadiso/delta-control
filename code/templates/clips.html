@@ -1,9 +1,9 @@
-$def with(header, nav)
+$def with(header, nav, cues)
 $:header
 $:nav
 
 <div id="clips-page" class="sub-page">
-	<div id="clips" style="margin-left:50px;">
+	<div id="clips" class="label">
 		<span class="page-label"><h2 class="page-label"><b>Current Clip Names</b></h2></span>
 	</div>
 	<!--
@@ -18,18 +18,16 @@ $:nav
 		</span>
 	</div>
 	-->
-	<div id="clips-view" style="display:''; margin-left:50px; margin-top:70px;">
-		<div id="view-clips-left" class="edit-column">			
-			<div id="view-clips">
-				<script type="text/javascript">
-					loadClips();
-				</script>
-			</div>
+	<div id="clips-view" style="display:''; margin-left:50px;">			
+		<div class="bottom-bordered" style="padding-bottom:48px;">
+			<img style="float:right;" onclick="addClip('true')" src="static/img/add_clip.png"></img>
 		</div>
-		<div id="view-clips-right" class="edit-column">
-			<span style="float:right;" onclick="addClip('true')">
-				<img src="static/img/add_clip.png"></img>
-			</span>
+		<div id="view-clips">
+			<!--
+			<script type="text/javascript">
+				loadClips();
+			</script>
+			-->
 		</div>
 	</div>
 	<div id="clips-edit-view" style="display:none; margin-left:50px; margin-top:70px;">

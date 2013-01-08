@@ -14,6 +14,12 @@ a{
 	text-decoration: none;
 }
 
+.scheduler-dropdown{
+	position: relative;
+	top: -3px;
+	width: 225px;
+}
+
 .hp-text{
 	font-family: HPSimplified;	
 }	
@@ -28,7 +34,7 @@ a{
 
 .label{
 	margin-left:50px; 
-	padding-top: 10px;
+	padding-top: 20px;
 	margin-bottom:20px;
 }
 
@@ -38,7 +44,7 @@ a{
 .nav-item{
 	margin-left: 20px;
 	float: left;
-	height: 25px;
+	height: 27px;
 }
 
 .active-nav{
@@ -83,6 +89,16 @@ a{
 	overflow: visible;
 }
 
+.bottom-bordered{
+	width:100%;
+	border-bottom: 1px #b9b8bb solid;
+}
+
+.cue-list-item{
+	width:100%;
+	border-bottom: 1px #b9b8bb solid;
+}
+
 .sub-page{
 	width: 800px;
 }
@@ -115,9 +131,9 @@ a{
 }
 
 .sch-div-hour{
-	position:absolute;
+	position:relative;
 	left: 0px;
-	//border: 1px solid red;
+	padding-top:20px;
 	width: 50px;
 	height: 83px;	
 }
@@ -239,6 +255,7 @@ a{
 
 .edit-column{
 	width: 50%;
+	height: 100%;
 	float: left;
 }
 
