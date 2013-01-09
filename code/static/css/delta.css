@@ -14,6 +14,10 @@ a{
 	text-decoration: none;
 }
 
+img{
+	cursor: pointer;
+}
+
 .scheduler-dropdown{
 	position: relative;
 	top: -3px;
@@ -87,6 +91,12 @@ a{
 	width: 100%;
 	border-top: 1px black solid;
 	overflow: visible;
+}
+
+.top-bordered-page{
+	border-top: 1px #b9b8bb solid;
+	overflow: visible;
+	width: 100%;
 }
 
 .bottom-bordered{

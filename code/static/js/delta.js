@@ -44,19 +44,35 @@ function updateScheduler(date){
 	})
 }
 
-function loadScheduler(data){
-	var playlists = eval('(' + data + ')');
-	for(var p in playlists){
-		if(playlists.hasOwnProperty(p)){
-			var hour = "." + p.split(':')[0];
-			var min = "." + p.split(':')[1];
-			var playlist = playlists[p];
-			$(hour + ' > ' + min).html(playlist);
+function resetScheduler(){
+	for(var i = 0; i < 24; i++){
+		for(var j = 0; j < 60; j += 15){
+			var ddId = "#dd-" + i.toString() + "-" + j.toString();
+			$(ddId).val("none");
 		}
 	}
 }
 
-function saveSchedule(){
+function loadScheduler(data){
+	var playlists = eval('(' + data + ')');
+	resetScheduler(); 
+	for(var p in playlists){
+		if(playlists.hasOwnProperty(p)){
+			var hour = p.split(':')[0];
+			var min = p.split(':')[1];
+			if(min == "00"){
+				min = "0";
+			}
+			var ddId = "#dd-" + hour + "-" + min;
+			var playlist = playlists[p];
+			//alert("setting " + ddId + " to " + playlist);
+			//$(hour + ' > ' + min).html(playlist);
+			$(ddId).val(playlist);
+		}
+	}
+}
+
+function getSchedule(){
 	var date = $('#datepicker').val();
 	if(date == ""){
 		alert("No date selected.");
@@ -73,12 +89,27 @@ function saveSchedule(){
 			}
 		}
 	}
+	/*
 	if(!$.isEmptyObject(data)){
 		data['date'] = date;
+		return data;
+	} else {
+		return false;
+	}
+	*/
+	//Need to send empty schedule in order to reset dates.
+	data['date'] = date;
+	return data;
+}
+
+function saveSchedule(mode){
+	var schedule = getSchedule();
+	if(schedule){
+		schedule["mode"] = mode;
 		$.ajax({
 			url:'submitschedule',
 			type:'POST',
-			data:data,
+			data:schedule,
 			success:function(data){
 				alert("Schedule successfully saved.")
 			}

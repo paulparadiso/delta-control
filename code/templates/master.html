@@ -6,41 +6,45 @@ $:nav
 	<div id="master" style="margin-left:50px; margin-top:20px">
 		<h2 class="page-label"><b>Master Controls</b></h2>
 	</div>
-	<div id="playback-controls" class="top-bordered label" style="margin-left:50px; padding-top: 10px;margin-bottom:20px;">
+	<div id="playback-controls" class="top-bordered-page label" style="">
 		<h2>Playback Controls</h2><br>
 		<span class="playback-control">
 			<img onclick="sendCmd('playback','play')" src="static/img/play.png"></img>
-			<br/><br/>play
+			<br/>
+			<span style="position:relative; left:-2px;">play</span>
 		</span>
 		<span class="playback-control control-item">
 			<img onclick="sendCmd('playback','pause')" src="static/img/pause.png"></img>
-			<br><br/>pause
+			<br>
+			<span style="position:relative; left:-2px;">pause</span>
 		</span>
 		<span class="playback-control control-item">
 			<img onclick="sendCmd('playback','stop')" src="static/img/stop.png"></img>
-			<br><br/>stop
+			<br>
+			<span style="position:relative; left:-3px;">stop</span>
 		</span>
 		<span class="playback-control control-item">
 			<img onclick="sendCmd('skip')" src="static/img/skip.png"></img>
-			<br><br/>skip
+			<br>
+			<span style="position:relative; left:-3px;">skip</span>
 		</span>
 	</div>
 	<br>
-	<div id="playlist" class="top-bordered" style="margin-left:50px; margin-top: 80px; padding-top:10px">
+	<div id="playlist" class="top-bordered-page" style="margin-left:50px; margin-top: 80px; padding-top:10px; padding-bottom:25px;">
 		<h2>Playlist</h2><br>
-		<span id="playlist-select" class="default">
-			<select id="playlist-dropdown">
+		<span id="playlist-select" class="default" style="position:relative; top:3px;">
+			<select id="playlist-dropdown" style="width: 150px;">
 				$for i in playlists:
 					<option value="$i" class="hp-text">$i</option>
 			</select>
 		</span>
 		<span id="playlist-play" style="text-align:center;margin-top:-10px;margin-left:10px;">
 			<img onclick="sendPlaylist()" src="static/img/play.png"></img>
-			<br/><br/>
+			<br/>
 			Play now
 		</span>	
 	</div>
-	<div id="power" class="top-bordered" style="margin-left:50px;padding-top:10px; margin-top:80px;">
+	<div id="power" class="top-bordered-page" style="margin-left:50px;padding-top:20px; margin-top:80px;">
 		<h2>Power</h2><br>
 		<div id="power-states">
 			<span onclick="sendCmd('power','all on')" id="power-button-on" class="power-button">
