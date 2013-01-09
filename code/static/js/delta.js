@@ -278,7 +278,7 @@ function newPlaylist(){
 	//$('#new-playlist-name').val(currentPlaylistName);
 	//bRename = true;
 	activateRenamePlaylist();
-	loadClips();
+	//loadClips();
 }
 
 function editClip(clip){
