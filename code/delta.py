@@ -77,13 +77,20 @@ class Playlists:
 		playlist_keys = redis.keys('playlist:*')
 		cues = []
 		cue_keys = redis.keys('cue:*')
-		for i in cue_keys:
-			print i
-			cues.append(i.split(':')[1])
-		for i in playlist_keys:
-			playlist_name = i.split(':')[1]
+		if(isinstance(cue_keys, basestring)):
+			cues.append(cue_keys.split(':')[1])
+		else:
+			for i in cue_keys:
+				cues.append(i.split(':')[1])
+		if(isinstance(playlist_keys, basestring)):
+			playlist_name = playlist_keys.split(':')[1]
 			playlist = json.loads(redis.get(i))
 			playlists[playlist_name] = playlist
+		else:
+			for i in playlist_keys:
+				playlist_name = i.split(':')[1]
+				playlist = json.loads(redis.get(i))
+				playlists[playlist_name] = playlist
 		return render.playlists(header, nav, playlists, cues)
 
 	def POST(self):
@@ -104,8 +111,11 @@ class Clips:
 		nav = render.nav('clips')
 		cue_keys = redis.keys("cue:*")
 		cues = []
-		for i in cue_keys:
-			cues.append(i.split(':')[1])
+		if(isinstance(cue_keys, basestring)):
+			cues.append(cue_keys.split(':')[1])
+		else:
+			for i in cue_keys:
+				cues.append(i.split(':')[1])
 		return render.clips(header, nav, cues)
 
 	def POST(self):
