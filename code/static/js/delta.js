@@ -1,8 +1,8 @@
 var editorMode = 'name';
-var currentPlaylistName = '';
+var currentPlaylistName = "";
+var oldPlaylistName = "";
 var currentPlaylist = new Array();
 var bRename = false;
-var oldPlaylistName = '';
 var highlightedCue = 0;
 var bHaveHighlightedCue = false;
 var playlistList = '';
@@ -24,8 +24,10 @@ function init(){
 }
 
 function initDatepicker(){
+	var today = new Date();
 	$(function() {
         $( "#datepicker" ).datepicker({
+        	defaultDate: today,
 			onSelect: function(date){
 				updateScheduler(date);
 			}
@@ -226,21 +228,36 @@ function getPlaylist(plist){
 }
 
 function editPlaylist(plist){
-	getPlaylist(plist);
-	oldTab = '#view-tab';
-	newTab = '#edit-tab';
-	oldDiv = '#playlist-view'
-	newDiv = '#edit-view'
-	$(oldTab).removeClass('active-tab');
-	$(oldTab).addClass('inactive-tab');
-	$(oldDiv).css('display','none')
-	$(newTab).removeClass('inactive-tab');
-	$(newTab).addClass('active-tab');
-	$(newDiv).css('display','');
-	$('#playlist-name-readout').css('display','');
-	$('#playlist-name-input').css('display','none');
-	$('#playlist-name-rename').css('visibility','visible');
-	$('#playlist-name-readout').html(plist);
+	if(plist){
+		getPlaylist(plist);
+		currentPlaylistName = plist;
+		bRename = false;
+		oldTab = '#view-tab';
+		newTab = '#edit-tab';
+		oldDiv = '#playlist-view';
+		newDiv = '#edit-view';
+		$(oldTab).removeClass('active-tab');
+		$(oldTab).addClass('inactive-tab');
+		$(oldDiv).css('display','none')
+		$(newTab).removeClass('inactive-tab');
+		$(newTab).addClass('active-tab');
+		$(newDiv).css('display','');
+		$('#playlist-name-readout').css('visibility','visible');
+		$('#playlist-name-input').css('visibility','hidden');
+		//$('#playlist-name-rename').css('visibility','visible');
+		$('#playlist-name-readout').html("Current Playlist Name: " + plist);
+	} else {
+		newTab = '#view-tab';
+		oldTab = '#edit-tab';
+		newDiv = '#playlist-view';
+		oldDiv = '#edit-view';
+		$(oldTab).removeClass('active-tab');
+		$(oldTab).addClass('inactive-tab');
+		$(oldDiv).css('display','none')
+		$(newTab).removeClass('inactive-tab');
+		$(newTab).addClass('active-tab');
+		$(newDiv).css('display','');
+	}
 }
 
 function newPlaylist(){
@@ -440,21 +457,18 @@ function populatePlaylist(){
 function activateRenamePlaylist(){
 	var name = $('#playlist-name-readout').html();
 	//alert("changing name of " + name);
-	$('#playlist-name-readout').css('display','none');
-	$('#playlist-name-input').css('display','');
-	$('#playlist-name-rename').css('visibility','hidden');
+	$('#playlist-name-readout').css('visibility','hidden');
+	$('#playlist-name-input').css('visibility','visible');
+	$('#new-playlist-name').val(currentPlaylistName);
+	//$('#playlist-name-rename').css('visibility','hidden');
 	bRename = true;
 }
 
 function savePlaylist(){
-	//alert("saving playlist.");
 	if(bRename){
 		oldPlaylistName = currentPlaylistName;
-		currentPlaylistName = document.getElementById('new-playlist-name').val();
-		//alert(currentPlaylistName);
-	} else {
 		currentPlaylistName = $('#new-playlist-name').val();
-	}
+	} 
 	if(currentPlaylistName == ""){
 		alert("Please enter a name for the playlist.");
 		return;
@@ -466,7 +480,11 @@ function savePlaylist(){
 	$.ajax({
 		url:'playlists',
 		type:'POST',
-		data:{name:currentPlaylistName,playlist:playlistStr}
+		data:{name:currentPlaylistName,playlist:playlistStr},
+		success:function(){
+			//editPlaylist();
+			window.location.assign('/playlists');
+		}
 	});
 }
 

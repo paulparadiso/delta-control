@@ -2,6 +2,7 @@ import web
 import redis
 import json
 from datetime import date, timedelta
+from settings import commands, addresses
 
 days_in_month = {
 	'01':31,
@@ -159,7 +160,7 @@ class Date:
 		clear_date(date)
 		print("setting schedule for " + date + " to " + params.mode)
 		if(params.mode == "day"):
-			self._clear_day(day)
+			self._clear_day(date)
 			self._set_day(date, params)
 		if(params.mode == "week"):
 			self._clear_week(date)

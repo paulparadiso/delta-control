@@ -43,12 +43,13 @@ $:nav
 			</div>
 	</div>
 	<div id="edit-view" style="display:none; margin-left:50px;">
-		<div id="playlist-edit-buttons" style="width:100%; padding-bottom:25px; border-bottom: 1px solid #b9b8bb">	
-			<span id="playlist-name-input" style="display:none">
+		<div id="playlist-edit-buttons" style="width:100%; padding-bottom:25px; margin-top:-67px; border-bottom: 1px solid #b9b8bb;">	
+			<span id="playlist-name-input" style="position: relative; top:44px; visibility:visible">
 				Enter Playlist Name<br>
 				<input type="text" id="new-playlist-name" class="new-clip-input">
 			</span>
-			<span id="playlist-name-readout" style="visibility:hidden">
+			<br/>
+			<span id="playlist-name-readout" style="visibility:visible">
 				Playlist Name
 			</span>
 			<span id="playlist-namer">
@@ -60,13 +61,11 @@ $:nav
 		<div style="width:100%;">
 			<div id="edit-left" class="edit-column" style="margin-top:10px;">
 				<div id="cue-selector">
-					<span style="padding-top:10px;">
-						<select id="cue-dropdown" class="default" style="width:150px;">
+					<span style="position:relative; top:-13px; padding-right: 15px;">
+						<select id="cue-dropdown" style="width:150px;">
 							<option value="__IGNORE__">Select Clip</option>
-							<!--
 							$for j in cues:
 								<option value="$j">$j</option>
-							-->
 						</select>
 					</span>
 					<span onclick="addCue()" id="cue-add" style="display:'';"><img src="static/img/add.png"></img></span>
