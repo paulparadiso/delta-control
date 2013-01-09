@@ -306,9 +306,9 @@ function editClip(clip){
 		$('#new-clip-concierge').val("");
 	*/
 	} else {
-		//loadClips();
 		$('#clips-view').css('display','');
 		$('#clips-edit-view').css('display','none')
+		loadClips();
 	}
 }
 
