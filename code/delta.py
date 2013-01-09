@@ -112,8 +112,8 @@ class Clips:
 		clipName = params.clipName
 		ribbonCue = params.ribbonCue
 		conciergeCue = params.conciergeCue
-		editedClip = params.editedClip
-		redis.delete('cue:' + editedClip);
+		#editedClip = params.editedClip
+		#redis.delete('cue:' + editedClip);
 		redis.set("cue:" + clipName, ribbonCue + ':' + conciergeCue)
 
 class Command:

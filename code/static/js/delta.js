@@ -344,7 +344,7 @@ function saveClip(){
 	$.ajax({
 		url:'clips',
 		type:'POST',
-		data:{clipName:clipName,ribbonCue:ribbonCue,conciergeCue:conciergeCue,editedClip:editedClip},
+		data:{clipName:clipName,ribbonCue:ribbonCue,conciergeCue:conciergeCue},
 		success:function(data){
 			loadClips();
 			editClip();
