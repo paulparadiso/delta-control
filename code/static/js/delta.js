@@ -246,6 +246,7 @@ function editPlaylist(plist){
 		$('#playlist-name-input').css('visibility','hidden');
 		//$('#playlist-name-rename').css('visibility','visible');
 		$('#playlist-name-readout').html("Current Playlist Name: " + plist);
+		$('#playlist-name-rename').css('visibility','visible');
 	} else {
 		newTab = '#view-tab';
 		oldTab = '#edit-tab';
@@ -272,10 +273,12 @@ function newPlaylist(){
 	$(newTab).removeClass('inactive-tab');
 	$(newTab).addClass('active-tab');
 	$(newDiv).css('display','');
-	$('#playlist-name-readout').css('display','none');
-	$('#playlist-name-input').css('display','');
-	$('#playlist-name-rename').css('visibility','hidden');
-	loadClips;
+	//$('#playlist-name-readout').css('visibility','hidden');
+	//$('#playlist-name-input').css('visibility','visible');
+	//$('#new-playlist-name').val(currentPlaylistName);
+	//bRename = true;
+	activateRenamePlaylist();
+	loadClips();
 }
 
 function editClip(clip){
@@ -460,7 +463,7 @@ function activateRenamePlaylist(){
 	$('#playlist-name-readout').css('visibility','hidden');
 	$('#playlist-name-input').css('visibility','visible');
 	$('#new-playlist-name').val(currentPlaylistName);
-	//$('#playlist-name-rename').css('visibility','hidden');
+	$('#playlist-name-rename').css('visibility','hidden');
 	bRename = true;
 }
 
