@@ -349,7 +349,7 @@ function saveClip(){
 		type:'POST',
 		data:{clipName:clipName,ribbonCue:ribbonCue,conciergeCue:conciergeCue},
 		success:function(data){
-			loadClips();
+			//loadClips();
 			editClip();
 		}
 	});
@@ -365,8 +365,10 @@ function loadClips(){
 			var cueHTML = "";
 			//alert(clipList);
 			var dd = document.getElementById("cue-dropdown");
-			dd.options.length = 0;
-			dd.options.add(new Option("Select Clip", "__IGNORE__"));
+			if(dd){
+				dd.options.length = 0;
+				dd.options.add(new Option("Select Clip", "__IGNORE__"));
+			}
 			for(var key in clipList){
 				//alert(key);
 				if(dd){
@@ -392,8 +394,10 @@ function loadDropdown(){
 	//}	
 	//alert("dropdown loaded.")
 	var dd = document.getElementById("cue-dropdown");
-	dd.options.length = 0;
-	dd.options.add(new Option("Select Clip", "__IGNORE__"));
+	if(dd){
+		dd.options.length = 0;
+		dd.options.add(new Option("Select Clip", "__IGNORE__"));
+	}
 	for(var key in clipList){
 		if(dd){
 			//alert(key);
