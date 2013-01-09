@@ -78,6 +78,7 @@ class Playlists:
 		cues = []
 		cue_keys = redis.keys('cue:*')
 		for i in cue_keys:
+			print i
 			cues.append(i.split(':')[1])
 		for i in playlist_keys:
 			playlist_name = i.split(':')[1]
