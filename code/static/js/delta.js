@@ -306,7 +306,7 @@ function editClip(clip){
 		$('#new-clip-concierge').val("");
 	*/
 	} else {
-		loadClips();
+		//loadClips();
 		$('#clips-view').css('display','');
 		$('#clips-edit-view').css('display','none')
 	}
@@ -321,7 +321,7 @@ function addClip(){
 	$('#new-clip-name-label').html("Enter New Name");
 	$('#new-clip-ribbon-label').html("Enter New Ribbon Marker");
 	$('#new-clip-concierge-label').html("Enter New Concierge Marker");
-	loadClips();
+	//loadClips();
 }
 
 function saveClip(){
@@ -365,6 +365,8 @@ function loadClips(){
 			var cueHTML = "";
 			//alert(clipList);
 			var dd = document.getElementById("cue-dropdown");
+			dd.options.length = 0;
+			dd.options.add(new Option("Select Clip", "__IGNORE__"));
 			for(var key in clipList){
 				//alert(key);
 				if(dd){
@@ -390,6 +392,8 @@ function loadDropdown(){
 	//}	
 	//alert("dropdown loaded.")
 	var dd = document.getElementById("cue-dropdown");
+	dd.options.length = 0;
+	dd.options.add(new Option("Select Clip", "__IGNORE__"));
 	for(var key in clipList){
 		if(dd){
 			//alert(key);
