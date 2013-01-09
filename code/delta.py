@@ -4,15 +4,15 @@ import json
 from datetime import date, timedelta
 
 days_in_month = {
-	'1':31,
-	'2':29,
-	'3':31,
-	'4':30,
-	'5':31,
-	'6':30,
-	'7':31,
-	'8':31,
-	'9':30,
+	'01':31,
+	'02':29,
+	'03':31,
+	'04':30,
+	'05':31,
+	'06':30,
+	'07':31,
+	'08':31,
+	'09':30,
 	'10':31,
 	'11':30,
 	'12':31,
@@ -178,21 +178,38 @@ class Date:
 		return d + delta
 
 	def _clear_day(self, _date):
+		print "clearing " + _date
 		keys = redis.keys('scheduledItem:' + _date + ':*')
 		for i in keys:
 			redis.delete(i)
 
 	def _clear_week(self, _date):
-		pass
+		date_lst = _date.split('/')
+		print "setting week of - " + _date
+		week = date(int(date_lst[2]), int(date_lst[0]), int(date_lst[1])).isocalendar()[1]
+		week_start = self._get_week_start(week, int(date_lst[2]))
+		for i in range(0,7):
+			next_date = week_start + timedelta(days=i)
+			year = str(next_date.year)
+			if(next_date.month < 10):
+				month = "0" + str(next_date.month)
+			else:
+				month = str(next_date.month)
+			if(next_date.day < 10):
+				day = "0" + str(next_date.day)
+			else:
+				day = str(next_date.day)
+			date_str = month + '/' + day + '/' + year
+			self._clear_day(date_str)
 
 	def _clear_month(self, _date):
 		date_lst = _date.split('/')
-		for i in range(0, days_in_month[date_lst[1]]):
+		for i in range(0, days_in_month[date_lst[0]]):
 			year = date_lst[2]
-			month = date_lst[1]
+			month = date_lst[0]
 			day = str(i + 1)
-			new_date = day + '/' + month + '/' + yea
-			self._clear_day(new_date, sch)
+			new_date = month + '/' + day + '/' + year
+			self._clear_day(new_date)
 
 	def _set_day(self, _date, sch):
 		for key in sch.keys():
@@ -203,11 +220,17 @@ class Date:
 
 	def _set_month(self, _date, sch):
 		date_lst = _date.split('/')
-		for i in range(0, days_in_month[date_lst[1]]):
+		for i in range(0, days_in_month[date_lst[0]]):
 			year = date_lst[2]
-			month = date_lst[1]
-			day = str(i + 1)
-			new_date = day + '/' + month + '/' + yea
+			if(date_lst[0] < 10):
+				month = "0" + date_lst[0]
+			else:
+				month = date_lst[0]
+			if(i < 10):
+				day = "0" + str(i)
+			else:
+				day = str(i)
+			new_date = month + '/' + day + '/' + year
 			self._set_day(new_date, sch)
 
 	def _set_week(self, _date, sch):
