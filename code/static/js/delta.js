@@ -87,7 +87,19 @@ function getSchedule(){
 			var dropdownVal = $(dropdown).val();
 			if(dropdownVal != ""){
 				//alert(dropdown + " = " + dropdownVal);
-				data[i.toString() + ':' + j.toString()] = dropdownVal;
+				var hour;
+				var min;
+				if(i < 10){
+					hour = "0" + i.toString();
+				} else {
+					hour = i.toString();
+				}
+				if(j < 10){
+					min = "0" + j.toString();
+				} else {
+					min = j.toString();
+				}
+				data[hour + ':' + min] = dropdownVal;
 			}
 		}
 	}

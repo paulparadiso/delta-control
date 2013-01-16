@@ -33,6 +33,7 @@ class Playlist:
 		return self.items
 
 	def make_playlist_from_json(self, j_list):
+		pass
 
 class PlaylistManager(threading.Thread):
 
@@ -42,7 +43,7 @@ class PlaylistManager(threading.Thread):
 		self.s_port = 34312
 		self.host = '127.0.0.1'
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		self.sock.bind(self.host, self.r_port)
+		self.sock.bind((self.host, self.r_port))
 		self.bRunning = True
 		self.current_playlist = None
 
@@ -51,14 +52,15 @@ class PlaylistManager(threading.Thread):
 
 	def run(self):
 		while(self.bRunning == True):
-			self.wait_for_message()
+			#pass
+			self._wait_for_message()
 
 	def start(self):
 		self.bRunning = True
 		super(PlaylistManager, self).start()
 
 	def _wait_for_message(self):
-		data, addr = sock.recvfrom(10000)
+		data, addr = self.sock.recvfrom(10000)
 		if data:
 			self._parse_message(data, addr)
 

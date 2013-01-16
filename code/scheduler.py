@@ -45,7 +45,7 @@ class ScheduleManager(threading.Thread):
 		while(self.bRunning == True):
 			now = time.clock()
 			if now - self.time_of_last_update > self.check_delay:
-				#self.print_time()
+				self.print_time()
 				self.time_of_last_update = now;
 				self._check_db()
 			time.sleep(30.0)
@@ -55,21 +55,37 @@ class ScheduleManager(threading.Thread):
 
 	def _get_time_string(self):
 		now = time.localtime()
-		return str(now.tm_mon) + ':' + str(now.tm_mday) + ':' + str(now.tm_hour) + ':' + str(now.tm_min)
+		if now.tm_mon < 10:
+			mon_str = "0" + str(now.tm_mon)
+		else:
+			mon_str = str(now.tm_mon)
+		if now.tm_mday < 10:
+			day_str = "0" + str(now.tm_mday)
+		else:
+			day_str = str(now.tm_mday)
+		if now.tm_hour < 10:
+			hour_str = "0" + str(now.tm_hour)
+		else:
+			hour_str = str(now.tm_hour)
+		if now.tm_min < 10:
+			min_str = "0" + str(now.tm_min)
+		else:
+			min_str = str(now.tm_min)
+		return mon_str + '/' + day_str + '/' + str(now.tm_year) + ':' + hour_str + ':' + min_str
 
 	def print_time(self):
 		t = self._get_time_string()
 		print t
 
 	def _check_db(self):
-		#print("checking for scheduled playlist.")
 		t_string = self._get_time_string()
-		db_query = "scheduleItem:" + t_string
+		db_query = "scheduledItem:" + t_string
+		print("checking for scheduled playlist - " + db_query)
 		query_results = self.redis.keys(db_query)
 		if(len(query_results) > 0):
 			playlist = self.redis.get(query_results[0])
 			play_cmd = '/play/' + playlist
-			#print "playing " + playlist
+			print "playing " + playlist
 			self.redis.delete(query_results[0])
 			self.sock.sendto(play_cmd,(self.host, self.s_port))
 

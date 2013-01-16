@@ -3,6 +3,8 @@ import redis
 import json
 from datetime import date, timedelta
 from settings import commands, addresses
+from playlist import PlaylistManager
+from scheduler import ScheduleManager
 
 days_in_month = {
 	'01':31,
@@ -297,6 +299,10 @@ class ClearCues:
 		for i in cue_keys:
 			redis.delete(i)
 
-if __name__ == "__main__":	
+if __name__ == "__main__":
+	pm = PlaylistManager()
+	pm.start()
+	sm = ScheduleManager()	
+	sm.start()
 	app = web.application(urls, globals())
 	app.run()
