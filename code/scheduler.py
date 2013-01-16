@@ -37,17 +37,22 @@ class ScheduleManager(threading.Thread):
 		self.redis = redis.Redis()
 		self.scheduleTag = 'scheduledItem'
 		self.time_of_last_update = 0.0
-		self.check_delay = 30.0
+		self.check_delay = 0.001
 		self.bRunning = True
 
 	def run(self):
 		print "thread started."
 		while(self.bRunning == True):
-			now = time.clock()
-			if now - self.time_of_last_update > self.check_delay:
-				self.print_time()
-				self.time_of_last_update = now;
-				self._check_db()
+			print "running"
+			#now = time.clock()
+			#print now
+			#diff = now - self.time_of_last_update
+			#print diff
+			#if diff > self.check_delay:
+			#	print "timer"
+			self.print_time()
+			#elf.time_of_last_update = now;
+			self._check_db()
 			time.sleep(30.0)
 
 	def stop(self):

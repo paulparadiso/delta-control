@@ -1,6 +1,8 @@
 import threading
 import socket
 import json
+import select
+import time
 
 class Playlist:
 
@@ -43,7 +45,9 @@ class PlaylistManager(threading.Thread):
 		self.s_port = 34312
 		self.host = '127.0.0.1'
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		#self.sock.setblocking(0)
 		self.sock.bind((self.host, self.r_port))
+		self.sock.settimeout(0.1)
 		self.bRunning = True
 		self.current_playlist = None
 
@@ -51,9 +55,14 @@ class PlaylistManager(threading.Thread):
 		self.bRunning = False
 
 	def run(self):
+		print "playlist manager awake and listening."
 		while(self.bRunning == True):
 			#pass
-			self._wait_for_message()
+			try:
+				self._wait_for_message()
+			except socket.timeout:
+				time.sleep(0.1)
+
 
 	def start(self):
 		self.bRunning = True
@@ -63,6 +72,9 @@ class PlaylistManager(threading.Thread):
 		data, addr = self.sock.recvfrom(10000)
 		if data:
 			self._parse_message(data, addr)
+		#ready = select.select([self.sock], [], [], 1.0)
+		#if ready:
+		#	data = self.sock.recv(10000)
 
 	def _parse_message(self, data, addr = None):
 		res = data.split('/')
