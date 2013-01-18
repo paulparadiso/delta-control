@@ -3,6 +3,7 @@ import threading
 import redis
 import time
 import socket
+import settings
 
 class ScheduledItem:
 
@@ -28,7 +29,8 @@ class ScheduleManager(threading.Thread):
 		print "initing sc."
 		super(ScheduleManager, self).__init__()
 		self.host = '127.0.0.1'
-		self.s_port = 34311
+		self.s_port = settings.addresses['self']
+		print "scheduler setting port to " + str(self.s_port)
 		self.r_port = 34310
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		self.sock.bind((self.host, self.r_port))
@@ -51,6 +53,7 @@ class ScheduleManager(threading.Thread):
 			#if diff > self.check_delay:
 			#	print "timer"
 			self.print_time()
+			self.sock.sendto("checking for playlist",(self.host, self.s_port))
 			#elf.time_of_last_update = now;
 			self._check_db()
 			time.sleep(30.0)
@@ -89,7 +92,7 @@ class ScheduleManager(threading.Thread):
 		query_results = self.redis.keys(db_query)
 		if(len(query_results) > 0):
 			playlist = self.redis.get(query_results[0])
-			play_cmd = '/play/' + playlist
+			play_cmd = 'start/' + playlist
 			print "playing " + playlist
 			self.redis.delete(query_results[0])
 			self.sock.sendto(play_cmd,(self.host, self.s_port))

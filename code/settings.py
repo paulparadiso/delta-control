@@ -4,10 +4,11 @@ commands = {
 	'cue': 'CUE',
 	'play': 'PLAY',
 	'stop': 'STOP',
+	'goto': "GOTOMARKER \"%s\" play",
 }
 
 addresses = {
 	'self': 34445,
-	'ribbon': ('127.0.0.1', 34446),
-	'concierge': ('127.0.0.1', 34447)
+	'ribbon': ('127.0.0.1', 34448),
+	'concierge': ('127.0.0.1', 34449)
 }
