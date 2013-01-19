@@ -128,6 +128,7 @@ function getSchedule(){
 			}
 			var dropdown = "#dd-" + hourExtra + i.toString() + "-" + minExtra + j.toString();
 			var dropdownVal = $(dropdown).val();
+			alert(dropdownVal);
 			if(dropdownVal != ""){
 				//alert(dropdown + " = " + dropdownVal);
 				var hour;

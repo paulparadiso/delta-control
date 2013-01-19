@@ -90,7 +90,7 @@ class PlaylistManager(threading.Thread):
 		return False
 
 	def _wait_for_message(self):
-		data, addr = self.sock.recv(10000)
+		data, addr = self.sock.recvfrom(10000)
 		if data:
 			print "got message - " + data
 			self._parse_message(data, addr)
