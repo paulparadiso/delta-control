@@ -170,6 +170,12 @@ class Command:
 		#print "sending playback command - " + cmd
 		control_cmd = settings.commands[cmd]
 		print "sending - " + control_cmd
+		if cmd == "skip":
+			snd_msg_sock.sendto(settings.addresses['self'], control_cmd)
+			return
+		if cmd == "power_on" or cmd == "power_off":
+			snd_msg_sock.sendto(settings.addresses['self'], control_cmd)
+			return
 		snd_msg_sock.sendto(control_cmd, rib_sock)
 		snd_msg_sock.sendto(control_cmd, con_sock)
 

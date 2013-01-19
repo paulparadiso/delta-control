@@ -47,13 +47,11 @@ class PlaylistManager(threading.Thread):
 
 	def __init__(self):
 		super(PlaylistManager, self).__init__()
-		self.r_port = settings.addresses['self']
 		#self.r_port = 34312
-		self.host = '127.0.0.1'
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		#self.sock.setblocking(0)
 		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		self.sock.bind((self.host, self.r_port))
+		self.sock.bind(settings.addresses['self'])
 		self.sock.settimeout(1.0)
 		self.bRunning = True
 		self.current_playlist = None

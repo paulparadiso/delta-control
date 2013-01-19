@@ -3,15 +3,16 @@ commands = {
 	'power_off': 'POWER_OFF',
 	'cue': 'CUE',
 	'play': 'PLAY',
-	'pause': 'PAUSE',
-	'stop': 'STOP',
+	'pause': 'STOP',
+	'stop': 'GOTOMARKER \"BLACK\"',
 	'skip': 'SKIP',
-	'goto': "GOTOMARKER \"%s\" play",
+	'goto': "GOTOMARKER \"%s\" play\r",
 	'wait': "%s_DONE",
 }
 
 addresses = {
-	'self': 34453,
-	'ribbon': ('127.0.0.1', 34451),
-	'concierge': ('127.0.0.1', 34452)
+	'self': ('127.0.0.1', 8920),
+	'ribbon': ('10.0.90.101', 8920),
+	'concierge': ('10.0.90.109', 8920),
+	'crestron': ('10.0.90.21', 8920)
 }
