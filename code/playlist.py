@@ -48,12 +48,13 @@ class PlaylistManager(threading.Thread):
 	def __init__(self):
 		super(PlaylistManager, self).__init__()
 		self.r_port = settings.addresses['self']
-		#self.s_port = 34312
+		#self.r_port = 34312
 		self.host = '127.0.0.1'
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		#self.sock.setblocking(0)
+		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.sock.bind((self.host, self.r_port))
-		self.sock.settimeout(0.1)
+		self.sock.settimeout(1.0)
 		self.bRunning = True
 		self.current_playlist = None
 		self.redis = redis.Redis()
@@ -90,10 +91,13 @@ class PlaylistManager(threading.Thread):
 		return False
 
 	def _wait_for_message(self):
-		data, addr = self.sock.recvfrom(10000)
-		if data:
-			print "got message - " + data
-			self._parse_message(data, addr)
+		try:
+			data, addr = self.sock.recv(10000)
+			if data:
+				print "got message - " + data
+				self._parse_message(data, addr)
+		except socket.timeout:
+			pass
 		#ready = select.select([self.sock], [], [], 1.0)
 		#if ready:
 		#	data = self.sock.recv(10000)

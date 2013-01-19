@@ -20,6 +20,7 @@ function init(){
 			playlistList = eval(data);
 		}
 	});
+	$.ajaxSetup({cache:false});
 	//$('.default').dropkick();
 	//Cufon.replace('.hp-text');
 }
@@ -84,8 +85,10 @@ function resetScheduler(){
 			if(j < 10){
 				minExtra = "0";
 			}
-			var ddId = "#dd-" + hourExtra + i.toString() + "-" + minExtra + j.toString();
-			$(ddId).val("none");
+			var ddId = "dd-" + hourExtra + i.toString() + "-" + minExtra + j.toString();
+			document.getElementById(ddId).value = "";
+			//alert("clearing " + ddId);
+			//$(ddId).val("none");
 		}
 	}
 }
@@ -100,11 +103,12 @@ function loadScheduler(data){
 			//if(min == "00"){
 			//	min = "0";
 			//}
-			var ddId = "#dd-" + hour + "-" + min;
+			var ddId = "dd-" + hour + "-" + min;
 			var playlist = playlists[p];
 			//alert("setting " + ddId + " to " + playlist);
 			//$(hour + ' > ' + min).html(playlist);
-			$(ddId).val(playlist);
+			//$(ddId).val(playlist);
+			document.getElementById(ddId).value = playlist;
 		}
 	}
 }
@@ -126,9 +130,10 @@ function getSchedule(){
 			if(j < 10){
 				minExtra = "0";
 			}
-			var dropdown = "#dd-" + hourExtra + i.toString() + "-" + minExtra + j.toString();
-			var dropdownVal = $(dropdown).val();
-			alert(dropdownVal);
+			var dropdown = "dd-" + hourExtra + i.toString() + "-" + minExtra + j.toString();
+			//var dropdownVal = $(dropdown).val();
+			var dropdownVal = document.getElementById(dropdown).value;
+			//alert(dropdownVal);
 			if(dropdownVal != ""){
 				//alert(dropdown + " = " + dropdownVal);
 				var hour;
