@@ -9,22 +9,22 @@ $:nav
 	<div id="playback-controls" class="top-bordered-page label" style="">
 		<h2>Playback Controls</h2><br>
 		<span class="playback-control">
-			<img onclick="sendCmd('playback','play')" src="static/img/play.png"></img>
+			<img onclick="sendCmd('control','play')" src="static/img/play.png"></img>
 			<br/>
 			<span style="position:relative; left:-2px;">play</span>
 		</span>
 		<span class="playback-control control-item">
-			<img onclick="sendCmd('playback','pause')" src="static/img/pause.png"></img>
+			<img onclick="sendCmd('control','pause')" src="static/img/pause.png"></img>
 			<br>
 			<span style="position:relative; left:-2px;">pause</span>
 		</span>
 		<span class="playback-control control-item">
-			<img onclick="sendCmd('playback','stop')" src="static/img/stop.png"></img>
+			<img onclick="sendCmd('control','stop')" src="static/img/stop.png"></img>
 			<br>
 			<span style="position:relative; left:-3px;">stop</span>
 		</span>
 		<span class="playback-control control-item">
-			<img onclick="sendCmd('skip')" src="static/img/skip.png"></img>
+			<img onclick="sendCmd('control', 'skip')" src="static/img/skip.png"></img>
 			<br>
 			<span style="position:relative; left:-3px;">skip</span>
 		</span>
@@ -47,13 +47,13 @@ $:nav
 	<div id="power" class="top-bordered-page" style="margin-left:50px;padding-top:20px; margin-top:80px;">
 		<h2>Power</h2><br>
 		<div id="power-states">
-			<span onclick="sendCmd('power','all on')" id="power-button-on" class="power-button">
+			<span onclick="sendCmd('control','power_on')" id="power-button-on" class="power-button">
 				<img src="static/img/all_on.png">
 			</span>
-			<span onclick="sendCmd('power','all off')" id="power-button-off" class="power-button" style="padding-left:50px;">
+			<span onclick="sendCmd('control','power_off')" id="power-button-off" class="power-button" style="padding-left:50px;">
 				<img src="static/img/all_off.png">
 			</span>
 		</div>
 	</div	>
 </div>
-</body
+</body>

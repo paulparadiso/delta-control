@@ -31,7 +31,8 @@ $:nav
 			<div id="$div_id" class="bottom-bordered" style="padding-bottom:18px;">
 				<img  style="padding-top:20px;" onclick="openPlaylist('$div_id')" src="static/img/plus.png"></img>
 				<b>$i</b>
-				<img style="padding-left:350px; padding-top:15px; float:right;" onclick="editPlaylist('$i')" src="static/img/edit.png"></img>
+				<img style="padding-left:10px; padding-top:15px; float:right;" onclick="editPlaylist('$i')" src="static/img/edit.png"></img>
+				<img style="padding-top:15px; float:right;" onclick="makeDefault('$i')" src="static/img/make_default_blue.png"></img>
 				$ content_div_id = div_id + '-content'
 				<div id="$content_div_id" style="display:none;">
 					$ cues = playlists[i]

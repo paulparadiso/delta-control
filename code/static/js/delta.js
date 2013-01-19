@@ -10,6 +10,7 @@ var bHaveOpenPlaylist = false;
 var clipList;
 var bEditingClip = false;
 var editedClip;
+var schedulerDate = ""
 
 function init(){
 	$.ajax({
@@ -28,11 +29,23 @@ function initDatepicker(){
 	$(function() {
         $( "#datepicker" ).datepicker({
         	defaultDate: today,
+        	minDate: 0,
 			onSelect: function(date){
+				//alert(date)
+				schedulerDate = date;
 				updateScheduler(date);
 			}
 		})
 	});
+}
+
+function sndMsg(){
+	msg = $('#msg-input').val()
+	$.ajax({
+		url:'sndmsg',
+		type:'POST',
+		data:{msg:msg},
+	})
 }
 
 function updateScheduler(date){
@@ -49,7 +62,15 @@ function updateScheduler(date){
 function resetScheduler(){
 	for(var i = 0; i < 24; i++){
 		for(var j = 0; j < 60; j += 15){
-			var ddId = "#dd-" + i.toString() + "-" + j.toString();
+			var hourExtra = "";
+			var minExtra = "";
+			if(i < 10){
+				hourExtra = "0";
+			}
+			if(j < 10){
+				minExtra = "0";
+			}
+			var ddId = "#dd-" + hourExtra + i.toString() + "-" + minExtra + j.toString();
 			$(ddId).val("none");
 		}
 	}
@@ -62,9 +83,9 @@ function loadScheduler(data){
 		if(playlists.hasOwnProperty(p)){
 			var hour = p.split(':')[0];
 			var min = p.split(':')[1];
-			if(min == "00"){
-				min = "0";
-			}
+			//if(min == "00"){
+			//	min = "0";
+			//}
 			var ddId = "#dd-" + hour + "-" + min;
 			var playlist = playlists[p];
 			//alert("setting " + ddId + " to " + playlist);
@@ -75,15 +96,23 @@ function loadScheduler(data){
 }
 
 function getSchedule(){
-	var date = $('#datepicker').val();
-	if(date == ""){
+	//var date = $('#datepicker').val();
+	if(schedulerDate == ""){
 		alert("No date selected.");
 		return;
 	}
 	var data = new Object;
 	for(var i = 0; i < 24; i++){
 		for(var j = 0; j < 60; j += 15){
-			var dropdown = "#dd-" + i.toString() + "-" + j.toString();
+			var hourExtra = "";
+			var minExtra = "";
+			if(i < 10){
+				hourExtra = "0";
+			}
+			if(j < 10){
+				minExtra = "0";
+			}
+			var dropdown = "#dd-" + hourExtra + i.toString() + "-" + minExtra + j.toString();
 			var dropdownVal = $(dropdown).val();
 			if(dropdownVal != ""){
 				//alert(dropdown + " = " + dropdownVal);
@@ -112,7 +141,7 @@ function getSchedule(){
 	}
 	*/
 	//Need to send empty schedule in order to reset dates.
-	data['date'] = date;
+	data['date'] = schedulerDate;
 	return data;
 }
 
@@ -273,6 +302,18 @@ function editPlaylist(plist){
 	}
 }
 
+function makeDefault(plist){
+	$.ajax({
+		url:'setdefault',
+		type:'POST',
+		data:{plist:plist},
+		success:function(data){
+			//loadClips();
+			alert(plist + " set as default playlist.");
+		}
+	});
+}
+
 function newPlaylist(){
 	//loadClips();
 	oldTab = '#view-tab';
@@ -337,17 +378,17 @@ function addClip(){
 }
 
 function saveClip(){
-	var clipName = $('#new-clip-name').val();
+	var clipName = $.trim($('#new-clip-name').val());
 	if(clipName == ''){
 		alert("Please enter a name for the clip.");
 		return;
 	}
-	var ribbonCue = $('#new-clip-ribbon').val();
+	var ribbonCue = $.trim($('#new-clip-ribbon').val());
 	if(ribbonCue == ''){
 		alert("Please enter a ribbon cue.")
 		return;
 	}
-	var conciergeCue = $('#new-clip-concierge').val();
+	var conciergeCue = $.trim($('#new-clip-concierge').val());
 	if(conciergeCue == ''){
 		alert("Please enter a concierge cue.")
 		return;
@@ -490,7 +531,7 @@ function activateRenamePlaylist(){
 function savePlaylist(){
 	if(bRename){
 		oldPlaylistName = currentPlaylistName;
-		currentPlaylistName = $('#new-playlist-name').val();
+		currentPlaylistName = $.trim($('#new-playlist-name').val());
 	} 
 	if(currentPlaylistName == ""){
 		alert("Please enter a name for the playlist.");

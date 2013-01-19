@@ -17,17 +17,22 @@ $:nav
 			<script type="text/javascript">
 				initDatepicker();
 			</script>
-			<p>Date: <input type="text" id="datepicker" /></p>
-			<!--<div id="datepicker"></div>-->
+			<!--<input type="text" id="datepicker"></input>-->
+			<div id="datepicker" style="position:relative; left:90px; top:20px;"></div>
 		</div>
 		<div id="scheduling-playlists" class="scheduling-column">
 			Time
 			<br>
 			<div id="timeline-holder">
 			$for i in range(0,24):
+				$code:
+					if i < 10:
+						extra = "0"
+					else:
+						extra = ""
 				<div class="sch-div-main $i">
 					$code:
-						div_id = "%d-0" % (i)
+						div_id = "%d-00" % (i)
 						plist = div_id + "-plist"
 					<div onclick="openPlaylistList('$div_id')" class="sch-div-sub 00" style="top:-1px">
 						<!--
@@ -36,7 +41,7 @@ $:nav
 						<div id="$div_id" class="playlist-list" style="display:none">
 						</div>
 						-->
-						<select id="dd-$i-0" class="scheduler-dropdown" tabindex="2">
+						<select id="dd-$extra$i-00" class="scheduler-dropdown" tabindex="2">
              				<option value="">none</option>
               				$for j in playlists:
 								<option value="$j">$j</option>
@@ -52,14 +57,14 @@ $:nav
 						<div id="$div_id" class="playlist-list" style="display:none">
 						</div>
 						-->
-						<select id="dd-$i-15" class="scheduler-dropdown" tabindex="2">
+						<select id="dd-$extra$i-15" class="scheduler-dropdown" tabindex="2">
              				<option value="">none</option>
               				$for j in playlists:
 								<option value="$j">$j</option>
             			</select>
 					</div>
 					$code:
-						div_id = "%d-30" % (i)
+						div_id = extra + "%d-30" % (i)
 						plist = div_id + "-plist"
 					<div onclick="openPlaylistList('$div_id')" class="sch-div-sub 30" style="top:41px">
 						<!--
@@ -68,14 +73,14 @@ $:nav
 						<div id="$div_id" class="playlist-list" style="display:none">
 						</div>
 						-->
-						<select id="dd-$i-30" class="scheduler-dropdown" tabindex="2">
+						<select id="dd-$extra$i-30" class="scheduler-dropdown" tabindex="2">
              				<option value="">none</option>
               				$for j in playlists:
 								<option value="$j">$j</option>
             			</select>
 					</div>
 					$code:
-						div_id = "%d-45" % (i)
+						div_id = extra + "%d-45" % (i)
 						plist = div_id + "-plist"
 					<div onclick="openPlaylistList('$div_id')" class="sch-div-sub 45" style="top:62px">
 						<!--
@@ -84,7 +89,7 @@ $:nav
 						<div id="$div_id" class="playlist-list" style="display:none">
 						</div>
 						-->
-						<select id="dd-$i-45" class="scheduler-dropdown" tabindex="2">
+						<select id="dd-$extra$i-45" class="scheduler-dropdown" tabindex="2">
              				<option value="">none</option>
               				$for j in playlists:
 								<option value="$j">$j</option>

@@ -52,8 +52,8 @@ class ScheduleManager(threading.Thread):
 			#print diff
 			#if diff > self.check_delay:
 			#	print "timer"
-			self.print_time()
-			self.sock.sendto("checking for playlist",(self.host, self.s_port))
+			#self.print_time()
+			#self.sock.sendto("checking for get_playlist",(self.host, self.s_port))
 			#elf.time_of_last_update = now;
 			self._check_db()
 			time.sleep(30.0)

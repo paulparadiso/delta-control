@@ -57,12 +57,15 @@ class PlaylistManager(threading.Thread):
 		self.bRunning = True
 		self.current_playlist = None
 		self.redis = redis.Redis()
+		self.wait_list = []
 
 	def stop(self):	
 		self.bRunning = False
 
 	def run(self):
 		print "playlist manager awake and listening."
+		default_playlist = self.redis.get('defaultPlaylist')
+		self._start_playlist(default_playlist)
 		while(self.bRunning == True):
 			try:
 				self._wait_for_message()
@@ -73,6 +76,18 @@ class PlaylistManager(threading.Thread):
 	def start(self):
 		self.bRunning = True
 		super(PlaylistManager, self).start()
+
+	def _check_wait_list(self, s):
+		print "checking for %s in waitlist" % (s)
+		for i in self.wait_list:
+			print "checking %s against %s" % (s,i)
+			if s in i:
+				print "found wait string"
+				self.wait_list.remove(i)
+				print "waitlist now has %d items" % (len(self.wait_list))
+				if len(self.wait_list) == 0:
+					return True
+		return False
 
 	def _wait_for_message(self):
 		data, addr = self.sock.recvfrom(10000)
@@ -90,6 +105,11 @@ class PlaylistManager(threading.Thread):
 				cmd = res[0]
 				item = res[1]
 				self._process_message(cmd, item)
+			return
+		if len(self.wait_list) > 0:
+			if self._check_wait_list(data):
+				self._advance_playlist()
+				return
 
 	def _process_message(self, cmd, item):
 		if(cmd == 'start'):
@@ -103,6 +123,7 @@ class PlaylistManager(threading.Thread):
 		print "starting playlist - " + item
 		retr_list = self.redis.get('playlist:' + item)
 		if(retr_list):
+			self.wait_list = []
 			self.current_playlist = Playlist(json.loads(retr_list))
 			self._advance_playlist()
 
@@ -111,16 +132,21 @@ class PlaylistManager(threading.Thread):
 			return
 		next_item = self.current_playlist.get_next_item()
 		if next_item == "__done__":
-			self.current_playlist == None
-			return
-		self._send_playlist_item(next_item)
+			default_playlist = self.redis.get('defaultPlaylist')
+			self._start_playlist(default_playlist)
+		else:
+			self._send_playlist_item(next_item)
 
 	def _send_playlist_item(self, item):
 		#msg = '/start/' + item
 		print "sending cues - " + item
 		messages = item.split(':')
 		ribbon_msg = settings.commands['goto'] % (messages[0])
+		ribbon_wait = settings.commands['wait'] % (messages[0])
+		self.wait_list.append(ribbon_wait)
 		self.sock.sendto(ribbon_msg, settings.addresses['ribbon'])
 		if len(messages) > 1:
 			concierge_msg = settings.commands['goto'] % (messages[1])
+			concierge_wait = settings.commands['wait'] % (messages[1])
+			self.wait_list.append(concierge_wait)
 			self.sock.sendto(concierge_msg, settings.addresses['concierge'])

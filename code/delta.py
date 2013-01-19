@@ -1,10 +1,22 @@
 import web
 import redis
 import json
+import socket
+import settings
 from datetime import date, timedelta
 from settings import commands, addresses
 from playlist import PlaylistManager
 from scheduler import ScheduleManager
+
+"""
+SndMsg socket for testing playlist manager.
+"""
+
+snd_msg_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+snd_msg_host = '127.0.0.1'
+snd_msg_port = settings.addresses['self']
+rib_sock = settings.addresses['ribbon']
+con_sock = settings.addresses['concierge']
 
 days_in_month = {
 	'01':31,
@@ -31,10 +43,12 @@ urls = (
 	'/submitdate', 'Date',
 	'/submitschedule', 'Date',
 	'/getplaylists', 'GetPlaylists',
+	'/setdefault', 'SetDefault',
 	'/clips','Clips',
 	'/getclips','GetClips',
 	'/clearplaylists', 'ClearPlaylists',
 	'/clearcues', 'ClearCues',
+	'/sndmsg', "SndMsg",
 )
 
 redis = redis.Redis('localhost')
@@ -91,6 +105,8 @@ class Playlists:
 	def POST(self):
 		params = web.input()
 		plist_name = params.name;
+		plist_name = plist_name.lstrip()
+		plist_name = plist_name.rstrip()
 		plist_str = params.playlist
 		#print "new playlist - " + plist_name
 		#print plist_str
@@ -119,27 +135,44 @@ class Clips:
 		#redis.delete('cue:' + editedClip);
 		redis.set("cue:" + clipName, ribbonCue + ':' + conciergeCue)
 
+class SndMsg:
+
+	def GET(self):
+		header = render.header()
+		nav = render.nav('sndmsg')
+		page = render.sndmsg(header, nav)
+		return page
+
+	def POST(self):
+		params = web.input()
+		msg = params.msg
+		print "Sending message - " + msg
+		snd_msg_sock.sendto(msg, (snd_msg_host, snd_msg_port))
+
 class Command:
 	
 	def POST(self):
 		#print d
 		params = web.input()
+		#print "got command - " + params.cmdtype + " - " + params.cmd
 		if params.cmdtype == 'playlist':
 			self._start_playlist(params.cmd)
-		if params.cmdtype == 'playback':
+		if params.cmdtype == 'control':
 			self._control_cmd(params.cmd)
-		if params.cmdtype == 'power':
-			self._set_power(params.cmd)
 			
 	def _start_playlist(self, plist):
-		print "starting playlist - " + plist
+		#print "starting playlist - " + plist
+		play_cmd = 'start/' + plist
+		snd_msg_sock.sendto(play_cmd,(snd_msg_host, snd_msg_port))
+
 		
-	def _control_cmd(self, cmd):
-		print "sending playback command - " + cmd
-		
-	def _set_power(self, cmd):
-		print "setting power to - " + cmd
-		
+	def _control_cmd(self, cmd):	
+		#print "sending playback command - " + cmd
+		control_cmd = settings.commands[cmd]
+		print "sending - " + control_cmd
+		snd_msg_sock.sendto(control_cmd, rib_sock)
+		snd_msg_sock.sendto(control_cmd, con_sock)
+
 class Date:
 
 	def GET(self):
@@ -158,7 +191,7 @@ class Date:
 
 	def POST(self):
 		params = web.input()
-		#print params.keys()
+		print params.keys()
 		date = params.date
 		clear_date(date)
 		print("setting schedule for " + date + " to " + params.mode)
@@ -208,7 +241,7 @@ class Date:
 
 	def _clear_month(self, _date):
 		date_lst = _date.split('/')
-		for i in range(0, days_in_month[date_lst[0]]):
+		for i in range(1, days_in_month[date_lst[0]] + 1):
 			year = date_lst[2]
 			month = date_lst[0]
 			day = str(i + 1)
@@ -224,7 +257,7 @@ class Date:
 
 	def _set_month(self, _date, sch):
 		date_lst = _date.split('/')
-		for i in range(0, days_in_month[date_lst[0]]):
+		for i in range(1, days_in_month[date_lst[0]] + 1):
 			year = date_lst[2]
 			if(date_lst[0] < 10):
 				month = "0" + date_lst[0]
@@ -274,6 +307,13 @@ class GetPlaylist:
 		plist = redis.get('playlist:' + playlist)
 		return plist
 
+class SetDefault:
+
+	def POST(self):
+		params = web.input()
+		playlist = params.plist
+		redis.set('defaultPlaylist', playlist)
+
 class GetClips:
 
 	def GET(self):
@@ -301,8 +341,10 @@ class ClearCues:
 
 if __name__ == "__main__":
 	pm = PlaylistManager()
+	pm.setDaemon(True)
 	pm.start()
-	sm = ScheduleManager()	
+	sm = ScheduleManager()
+	sm.setDaemon(True)	
 	sm.start()
 	app = web.application(urls, globals())
 	app.run()
