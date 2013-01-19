@@ -27,9 +27,10 @@ function init(){
 function initDatepicker(){
 	var today = new Date();
 	$(function() {
-        $( "#datepicker" ).datepicker({
+        $("#datepicker").datepicker({
         	defaultDate: today,
         	minDate: 0,
+        	'setDate': today,
 			onSelect: function(date){
 				//alert(date)
 				schedulerDate = date;
@@ -37,6 +38,19 @@ function initDatepicker(){
 			}
 		})
 	});
+	d = today.getDate().toString();
+	if(d.length < 2){
+		d = "0" + d
+	}
+	mInt = today.getMonth() + 1;
+	m = mInt.toString();
+	if(m.length < 2){
+		m = "0" + m;
+	}
+	y = today.getFullYear().toString();
+	dateToSet = m + '/' + d + '/' + y;
+	schedulerDate = dateToSet;
+	updateScheduler(schedulerDate);
 }
 
 function sndMsg(){
@@ -326,6 +340,7 @@ function newPlaylist(){
 	$(newTab).removeClass('inactive-tab');
 	$(newTab).addClass('active-tab');
 	$(newDiv).css('display','');
+	$('#new-playlist-name').val('');
 	//$('#playlist-name-readout').css('visibility','hidden');
 	//$('#playlist-name-input').css('visibility','visible');
 	//$('#new-playlist-name').val(currentPlaylistName);
@@ -553,7 +568,8 @@ function savePlaylist(){
 }
 
 function cancelEdit(){
-	swapPlaylistTab('view');
+	window.location.assign('/playlists');
+	//swapPlaylistTab('view');
 }
 
 function deactivateHighlight(){
