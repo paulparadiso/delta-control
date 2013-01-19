@@ -90,10 +90,10 @@ class PlaylistManager(threading.Thread):
 
 	def _wait_for_message(self):
 		try:
-			data, addr = self.sock.recv(10000)
+			data = self.sock.recv(10000)
 			if data:
 				print "got message - " + data
-				self._parse_message(data, addr)
+				self._parse_message(data)
 		except socket.timeout:
 			pass
 		#ready = select.select([self.sock], [], [], 1.0)
