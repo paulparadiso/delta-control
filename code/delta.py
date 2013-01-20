@@ -193,8 +193,14 @@ class Command:
 
 class Date:
 
-	def GET(self):
+	def POST(self):
 		params = web.input()
+		if params.action == 'get':
+			return _get_scheduled_items(params)
+		if params.action == 'set':
+			return _set_scheduled_items(params)
+
+	def _get_scheduled_items(params):
 		date = params.date
 		date_key = 'scheduledItem:' + date + ':*'
 		scheduled_keys = redis.keys(date_key)
@@ -207,9 +213,8 @@ class Date:
 			scheduled_items[hour + ':' + minute] = playlist
 		return json.dumps(scheduled_items)
 
-	def POST(self):
-		params = web.input()
-		print params.keys()
+	def _set_scheduled_items(params):
+		#print params.keys()
 		date = params.date
 		clear_date(date)
 		print("setting schedule for " + date + " to " + params.mode)
@@ -309,7 +314,7 @@ class Date:
 
 class GetPlaylists:
 
-	def GET(self):
+	def POST(self):
 		playlists = []
 		playlist_keys = redis.keys('playlist:*')
 		for i in playlist_keys:
@@ -319,7 +324,7 @@ class GetPlaylists:
 
 class GetPlaylist:
 
-	def GET(self):
+	def POST(self):
 		params = web.input()
 		playlist = params.playlist
 		plist = redis.get('playlist:' + playlist)
@@ -334,7 +339,7 @@ class SetDefault:
 
 class GetClips:
 
-	def GET(self):
+	def POST(self):
 		cues = {}
 		cue_keys = redis.keys('cue:*')
 		for i in cue_keys:

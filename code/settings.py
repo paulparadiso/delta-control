@@ -9,6 +9,9 @@ commands = {
 	'goto': "GOTOMARKER \"%s\" play\r",
 	'wait': "%s_DONE",
 }
+"""
+Local settings
+"""
 
 addresses = {
 	'self': ('127.0.0.1', 8920),
@@ -16,3 +19,14 @@ addresses = {
 	'concierge': ('127.0.0.1', 8922),
 	'crestron': ('127.0.0.1', 8923)
 }
+
+"""
+Production settings
+"""
+
+#addresses = {
+#	'self': ('127.0.0.1', 8920),
+#	'ribbon': ('127.0.0.1', 8921),
+#	'concierge': ('127.0.0.1', 8922),
+#	'crestron': ('127.0.0.1', 8923)
+#}

@@ -15,7 +15,7 @@ var schedulerDate = ""
 function init(){
 	$.ajax({
 		url:'getplaylists',
-		type:'GET',
+		type:'POST',
 		success: function(data){
 			playlistList = eval(data);
 		}
@@ -66,8 +66,8 @@ function sndMsg(){
 function updateScheduler(date){
 	$.ajax({
 		url:'submitdate',
-		type:'GET',
-		data:{date:date},
+		type:'POST',
+		data:{date:date,action:'get'},
 		success: function(data){
 			loadScheduler(data);
 		}
@@ -167,6 +167,7 @@ function getSchedule(){
 
 function saveSchedule(mode){
 	var schedule = getSchedule();
+	schedule['action'] = 'set'
 	if(schedule){
 		schedule["mode"] = mode;
 		$.ajax({
@@ -278,7 +279,7 @@ function swapPlaylistTab(currentTab){
 function getPlaylist(plist){
 	$.ajax({
 		url:'getplaylist',
-		type:'GET',
+		type:'POST',
 		data:{playlist:plist},
 		success:function(data){
 			currentPlaylist = JSON.parse(data);
@@ -432,7 +433,7 @@ function saveClip(){
 function loadClips(){
 	$.ajax({
 		url:'getclips',
-		type:'GET',
+		type:'POST',
 		success:function(data){
 			//alert(data);
 			clipList = JSON.parse(data);
