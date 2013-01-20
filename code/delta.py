@@ -64,6 +64,9 @@ def clear_date(date):
 class Index:
 
 	def GET(self):
+		web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
+		web.header('Cache-Control', 'post-check=0, pre-check=0', False)
+		web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('master')
 		playlist_keys = redis.keys('playlist:*')
@@ -76,6 +79,9 @@ class Index:
 class Scheduling:
 
 	def GET(self):
+		web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
+		web.header('Cache-Control', 'post-check=0, pre-check=0', False)
+		web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('scheduling')
 		playlist_keys = redis.keys("playlist:*")
@@ -87,6 +93,9 @@ class Scheduling:
 class Playlists:
 
 	def GET(self):
+		web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
+		web.header('Cache-Control', 'post-check=0, pre-check=0', False)
+		web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('playlists')
 		playlists = {}
@@ -118,6 +127,9 @@ class Playlists:
 class Clips:
 
 	def GET(self):
+		web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
+		web.header('Cache-Control', 'post-check=0, pre-check=0', False)
+		web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('clips')
 		cue_keys = redis.keys("cue:*")
@@ -147,7 +159,7 @@ class SndMsg:
 		params = web.input()
 		msg = params.msg
 		print "Sending message - " + msg
-		snd_msg_sock.sendto(msg, (snd_msg_host, snd_msg_port))
+		snd_msg_sock.sendto(msg, settings.addresses['self'])
 
 class Command:
 	
@@ -163,7 +175,7 @@ class Command:
 	def _start_playlist(self, plist):
 		#print "starting playlist - " + plist
 		play_cmd = 'start/' + plist
-		snd_msg_sock.sendto(play_cmd,(snd_msg_host, snd_msg_port))
+		snd_msg_sock.sendto(play_cmd,settings.addresses['self'])
 
 		
 	def _control_cmd(self, cmd):	
@@ -171,10 +183,10 @@ class Command:
 		control_cmd = settings.commands[cmd]
 		print "sending - " + control_cmd
 		if cmd == "skip":
-			snd_msg_sock.sendto(settings.addresses['self'], control_cmd)
+			snd_msg_sock.sendto('cmd/' + control_cmd, settings.addresses['self'])
 			return
 		if cmd == "power_on" or cmd == "power_off":
-			snd_msg_sock.sendto(settings.addresses['self'], control_cmd)
+			snd_msg_sock.sendto(control_cmd, settings.addresses['crestron'])
 			return
 		snd_msg_sock.sendto(control_cmd, rib_sock)
 		snd_msg_sock.sendto(control_cmd, con_sock)

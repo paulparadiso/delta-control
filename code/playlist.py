@@ -92,6 +92,7 @@ class PlaylistManager(threading.Thread):
 		try:
 			data = self.sock.recv(10000)
 			if data:
+				data = data.strip()
 				print "got message - " + data
 				self._parse_message(data)
 		except socket.timeout:
@@ -118,8 +119,9 @@ class PlaylistManager(threading.Thread):
 			self._start_playlist(item)
 		if(cmd == 'stop'):
 			self._stop_playlist(item)
-		if(cmd == 'complete'):
-			self._advance_playlist(item)
+		if cmd == 'cmd':
+			if item == 'SKIP':
+				self._advance_playlist()
 
 	def _start_playlist(self, item):
 		print "starting playlist - " + item
