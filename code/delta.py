@@ -196,16 +196,17 @@ class Date:
 	def POST(self):
 		params = web.input()
 		if params.action == 'get':
-			return _get_scheduled_items(params)
+			return self._get_scheduled_items(params)
 		if params.action == 'set':
-			return _set_scheduled_items(params)
+			return self._set_scheduled_items(params)
 
-	def _get_scheduled_items(params):
+	def _get_scheduled_items(self, params):
 		date = params.date
 		date_key = 'scheduledItem:' + date + ':*'
 		scheduled_keys = redis.keys(date_key)
 		scheduled_items = {}
 		for i in scheduled_keys:
+			print "s item" + i
 			split_key = i.split(':')
 			hour = split_key[2]
 			minute = split_key[3]
@@ -213,8 +214,8 @@ class Date:
 			scheduled_items[hour + ':' + minute] = playlist
 		return json.dumps(scheduled_items)
 
-	def _set_scheduled_items(params):
-		#print params.keys()
+	def _set_scheduled_items(self, params):
+		print params.keys()
 		date = params.date
 		clear_date(date)
 		print("setting schedule for " + date + " to " + params.mode)
@@ -273,7 +274,7 @@ class Date:
 
 	def _set_day(self, _date, sch):
 		for key in sch.keys():
-			if(key == "date" or key == "mode"):
+			if(key == "date" or key == "mode" or key == "action"):
 				continue
 			print "setting - " + _date
 			redis.set("scheduledItem:" + _date + ":" + key, sch[key])

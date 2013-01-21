@@ -134,6 +134,7 @@ class PlaylistManager(threading.Thread):
 	def _advance_playlist(self):
 		if not self.current_playlist:
 			return
+		self.wait_list = []
 		next_item = self.current_playlist.get_next_item()
 		if next_item == "__done__":
 			default_playlist = self.redis.get('defaultPlaylist')
