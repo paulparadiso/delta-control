@@ -6,4 +6,7 @@ if __name__ == "__main__":
 	lines = f.readlines()
 	for l in lines:
 		s = l.strip().split(',')
-		r_s.set('cue:' + s[0], s[1] + ':' + s[2])
+		for i in s:
+			i = i.strip()
+		print ('cue:%s=%s:%s:') % (s[0], s[1], s[2])
+#		r_s.set('cue:' + s[0], s[1] + ':' + s[2])

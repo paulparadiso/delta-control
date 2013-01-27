@@ -27,7 +27,7 @@ $:nav
 		</div>
 		$ playlist_keys = playlists.keys()
 		$for i in playlist_keys:
-			$ div_id = i.replace(' ','-')
+			$ div_id = i.replace(' ','-').replace('&','_')
 			<div id="$div_id" class="bottom-bordered" style="padding-bottom:18px;">
 				<img  style="padding-top:20px;" onclick="openPlaylist('$div_id')" src="static/img/plus.png"></img>
 				<b>$i</b>
