@@ -88,12 +88,12 @@ class ScheduleManager(threading.Thread):
 	def _check_db(self):
 		t_string = self._get_time_string()
 		db_query = "scheduledItem:" + t_string
-		#print("checking for scheduled playlist - " + db_query)
+		print("checking for scheduled playlist - " + db_query)
 		query_results = self.redis.keys(db_query)
 		if(len(query_results) > 0):
 			playlist = self.redis.get(query_results[0])
 			play_cmd = 'start/' + playlist
 			print "scheduler sending " + playlist
 			self.redis.delete(query_results[0])
-			self.sock.sendto(play_cmd,(self.host, self.s_port))
+			self.sock.sendto(play_cmd,settings.addresses['self'])
 

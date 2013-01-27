@@ -22,10 +22,11 @@ Local settings
 
 """
 Production settings
+self = 10.0.90.20
 """
 
 addresses = {
-	'self': ('10.0.90.20', 8920),
+	'self': ('127.0.0.1', 8920),
 	'ribbon': ('10.0.90.101', 8920),
 	'concierge': ('10.0.90.109', 8920),
 	'crestron': ('10.0.90.21', 8920)
