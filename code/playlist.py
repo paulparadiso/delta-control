@@ -49,10 +49,14 @@ class PlaylistManager(threading.Thread):
 		super(PlaylistManager, self).__init__()
 		#self.r_port = 34312
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		self.ex_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		#self.sock.setblocking(0)
 		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		self.sock.bind(settings.addresses['self'])
+		self.ex_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.sock.bind(('127.0.0.1', settings.addresses['self'][1]))
+		self.ex_sock.bind(settings.addresses['self'])
 		self.sock.settimeout(1.0)
+		self.ex_sock.settimeout(1.0)
 		self.bRunning = True
 		self.current_playlist = None
 		self.redis = redis.Redis()
@@ -97,6 +101,14 @@ class PlaylistManager(threading.Thread):
 				self._parse_message(data)
 		except socket.timeout:
 			pass
+		try:
+			data = self.ex_sock.recv(10000)
+			if data:
+				data = data.strip()
+				print "got message - " + data
+				self._parse_message(data)
+		except socket.timeout:
+			pass
 		#ready = select.select([self.sock], [], [], 1.0)
 		#if ready:
 		#	data = self.sock.recv(10000)
@@ -124,6 +136,12 @@ class PlaylistManager(threading.Thread):
 				self._advance_playlist()
 
 	def _start_playlist(self, item):
+		if item == 'Power On':
+			self.sock.sendto(settings.commands['power_on'], settings.addresses['crestron'])
+			return
+		if item == 'Power Off':
+			self.sock.sendto(settings.commands['power_off'], settings.addresses['crestron'])
+			return
 		print "starting playlist - " + item
 		retr_list = self.redis.get('playlist:' + item)
 		if(retr_list):

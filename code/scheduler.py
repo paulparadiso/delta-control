@@ -2,6 +2,7 @@ from singleton import Singleton
 import threading
 import redis
 import time
+import datetime
 import socket
 import settings
 
@@ -56,34 +57,47 @@ class ScheduleManager(threading.Thread):
 			#self.sock.sendto("checking for get_playlist",(self.host, self.s_port))
 			#elf.time_of_last_update = now;
 			self._check_db()
-			time.sleep(30.0)
+			time.sleep(60.0)
 
 	def stop(self):
 		self.bRunning = False
 
-	def _get_time_string(self):
-		now = time.localtime()
-		if now.tm_mon < 10:
-			mon_str = "0" + str(now.tm_mon)
+	def _get_time_string(self, future = False):
+		now = datetime.datetime.now()
+		if future:
+			now = now + datetime.timedelta(minutes = 15)
+		if now.month < 10:
+			mon_str = "0" + str(now.month)
 		else:
-			mon_str = str(now.tm_mon)
-		if now.tm_mday < 10:
-			day_str = "0" + str(now.tm_mday)
+			mon_str = str(now.month)
+		if now.day < 10:
+			day_str = "0" + str(now.day)
 		else:
-			day_str = str(now.tm_mday)
-		if now.tm_hour < 10:
-			hour_str = "0" + str(now.tm_hour)
+			day_str = str(now.day)
+		if now.hour < 10:
+			hour_str = "0" + str(now.hour)
 		else:
-			hour_str = str(now.tm_hour)
-		if now.tm_min < 10:
-			min_str = "0" + str(now.tm_min)
+			hour_str = str(now.hour)
+		if now.minute < 10:
+			min_str = "0" + str(now.minute)
 		else:
-			min_str = str(now.tm_min)
-		return mon_str + '/' + day_str + '/' + str(now.tm_year) + ':' + hour_str + ':' + min_str
+			min_str = str(now.minute)
+		return mon_str + '/' + day_str + '/' + str(now.year) + ':' + hour_str + ':' + min_str
 
 	def print_time(self):
 		t = self._get_time_string()
 		print t
+
+	def _check_future(self):
+		t_string = self._get_time_string(future = True)
+		db_query = "scheduledItem:" + t_string
+		query_results = self.redis.keys(db_query)
+		if(len(query_results) > 0):
+			playlist = 'Power On'
+			play_cmd = 'start/' + playlist
+			print "scheduler sending " + playlist
+			#self.redis.delete(query_results[0])
+			self.sock.sendto(play_cmd,settings.addresses['self'])
 
 	def _check_db(self):
 		t_string = self._get_time_string()
@@ -94,6 +108,7 @@ class ScheduleManager(threading.Thread):
 			playlist = self.redis.get(query_results[0])
 			play_cmd = 'start/' + playlist
 			print "scheduler sending " + playlist
-			self.redis.delete(query_results[0])
+			#self.redis.delete(query_results[0])
 			self.sock.sendto(play_cmd,settings.addresses['self'])
+		self._check_future()
 

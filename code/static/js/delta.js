@@ -30,7 +30,7 @@ function initDatepicker(){
 	$(function() {
         $("#datepicker").datepicker({
         	defaultDate: today,
-        	minDate: 0,
+        	//minDate: 0,
         	'setDate': today,
 			onSelect: function(date){
 				//alert(date)
