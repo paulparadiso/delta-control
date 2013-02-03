@@ -5,7 +5,7 @@ commands = {
 	'play': 'PLAY\r',
 	'pause': 'STOP\r',
 	'stop': 'GOTOMARKER BLACK\r',
-	'skip': 'SKIP\r',
+	'skip': 'SKIP',
 	'goto': "GOTOMARKER \"%s\" play\r",
 	'wait': "%s_DONE",
 }

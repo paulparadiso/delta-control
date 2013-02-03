@@ -18,6 +18,10 @@ snd_msg_port = settings.addresses['self']
 rib_sock = settings.addresses['ribbon']
 con_sock = settings.addresses['concierge']
 
+pm = PlaylistManager()
+pm.setDaemon(True)
+pm.start()
+
 days_in_month = {
 	'01':31,
 	'02':29,
@@ -175,15 +179,16 @@ class Command:
 	def _start_playlist(self, plist):
 		#print "starting playlist - " + plist
 		play_cmd = 'start/' + plist
-		snd_msg_sock.sendto(play_cmd,settings.addresses['self'])
-
+		#snd_msg_sock.sendto(play_cmd,settings.addresses['self'])
+		pm.set_message(play_cmd)
 		
 	def _control_cmd(self, cmd):	
 		#print "sending playback command - " + cmd
 		control_cmd = settings.commands[cmd]
 		print "sending - " + control_cmd
 		if cmd == "skip":
-			snd_msg_sock.sendto('cmd/' + control_cmd, settings.addresses['self'])
+			#snd_msg_sock.sendto('cmd/' + control_cmd, settings.addresses['self'])
+			pm.set_message('cmd/' + control_cmd)
 			return
 		if cmd == "power_on" or cmd == "power_off":
 			snd_msg_sock.sendto(control_cmd, settings.addresses['crestron'])
@@ -364,9 +369,6 @@ class ClearCues:
 			redis.delete(i)
 
 if __name__ == "__main__":
-	pm = PlaylistManager()
-	pm.setDaemon(True)
-	pm.start()
 	#sm = ScheduleManager()
 	#sm.setDaemon(True)	
 	#sm.start()

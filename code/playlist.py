@@ -22,7 +22,10 @@ class Playlist:
 		if self.index < len(self.items):
 			ret = self.redis.get("cue:" + self.items[self.index])
 			self.index += 1
-		print "returning - " + ret
+		if ret != None:
+			print "returning - " + ret
+		else:
+			print "returning empty item."
 		return ret
 
 	def reset(self):
@@ -66,6 +69,10 @@ class PlaylistManager(threading.Thread):
 		self.redis = redis.Redis()
 		self.wait_list = []
 		self.sm = scheduler.ScheduleManager()
+		self.new_message = None
+		
+	def set_message(self, message):
+		self.new_message = message
 
 	def stop(self):	
 		self.bRunning = False
@@ -93,7 +100,7 @@ class PlaylistManager(threading.Thread):
 				print "found wait string"
 				self.wait_list.remove(i)
 				print "waitlist now has %d items" % (len(self.wait_list))
-				if len(self.wait_list) == 0:
+				if len(self.wait_list) < 2:
 					return True
 		return False
 
@@ -112,6 +119,9 @@ class PlaylistManager(threading.Thread):
 			plist = self.sm.get_new_playlist()
 			print "received new playlist - " + plist
 			self._parse_message(plist)
+		if self.new_message != None:
+			self._parse_message(self.new_message)
+			self.new_message = None
 		#ready = select.select([self.sock], [], [], 1.0)
 		#if ready:
 		#	data = self.sock.recv(10000)
@@ -136,6 +146,7 @@ class PlaylistManager(threading.Thread):
 			self._stop_playlist(item)
 		if cmd == 'cmd':
 			if item == 'SKIP':
+				print "playlist got skip."
 				self._advance_playlist()
 
 	def _start_playlist(self, item):
@@ -156,7 +167,9 @@ class PlaylistManager(threading.Thread):
 		if not self.current_playlist:
 			return
 		self.wait_list = []
-		next_item = self.current_playlist.get_next_item()
+		next_item = None
+		while next_item == None:
+			next_item = self.current_playlist.get_next_item()
 		if next_item == "__done__":
 			default_playlist = self.redis.get('defaultPlaylist')
 			self._start_playlist(default_playlist)
