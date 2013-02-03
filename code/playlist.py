@@ -5,6 +5,7 @@ import select
 import time
 import redis
 import settings
+import scheduler
 
 class Playlist:
 
@@ -47,20 +48,24 @@ class PlaylistManager(threading.Thread):
 
 	def __init__(self):
 		super(PlaylistManager, self).__init__()
+		self.check_internal = True
 		#self.r_port = 34312
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		self.ex_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		#self.ex_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		#self.sock.setblocking(0)
 		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		self.ex_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		self.sock.bind(('127.0.0.1', settings.addresses['self'][1]))
-		self.ex_sock.bind(settings.addresses['self'])
+		#self.ex_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.sock.bind(settings.addresses['self'])
+		#self.sock.bind(settings.addresses['self'])
+		#self.ex_sock.bind(settings.addresses['self'])
 		self.sock.settimeout(1.0)
-		self.ex_sock.settimeout(1.0)
+		#self.ex_sock.settimeout(1.0)
+		#self.ex_sock.settimeout(1.0)
 		self.bRunning = True
 		self.current_playlist = None
 		self.redis = redis.Redis()
 		self.wait_list = []
+		self.sm = scheduler.ScheduleManager()
 
 	def stop(self):	
 		self.bRunning = False
@@ -94,6 +99,7 @@ class PlaylistManager(threading.Thread):
 
 	def _wait_for_message(self):
 		try:
+			#print "checking intenal socket"
 			data = self.sock.recv(10000)
 			if data:
 				data = data.strip()
@@ -101,14 +107,11 @@ class PlaylistManager(threading.Thread):
 				self._parse_message(data)
 		except socket.timeout:
 			pass
-		try:
-			data = self.ex_sock.recv(10000)
-			if data:
-				data = data.strip()
-				print "got message - " + data
-				self._parse_message(data)
-		except socket.timeout:
-			pass
+		self.sm.update()
+		if self.sm.have_new_playlist():
+			plist = self.sm.get_new_playlist()
+			print "received new playlist - " + plist
+			self._parse_message(plist)
 		#ready = select.select([self.sock], [], [], 1.0)
 		#if ready:
 		#	data = self.sock.recv(10000)

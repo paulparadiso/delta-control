@@ -382,20 +382,22 @@ function editClip(clip){
 	*/
 	} else {
 		$('#clips-view').css('display','');
-		$('#clips-edit-view').css('display','none')
+		$('#clips-edit-view').css('display','none');
+		$('#clips-title').html('<h2 class="page-label"><b>Current Clip Names</b></h2>');
 		loadClips();
 	}
 }
 
-function addClip(){
+function addClip(b){
 	$('#clips-view').css('display','none');
 	$('#clips-edit-view').css('display','');
 	$('#new-clip-name').val("");
 	$('#new-clip-ribbon').val("");
 	$('#new-clip-concierge').val("");
 	$('#new-clip-name-label').html("Enter New Name");
-	$('#new-clip-ribbon-label').html("Enter New Ribbon Marker");
-	$('#new-clip-concierge-label').html("Enter New Concierge Marker");
+	$('#new-clip-ribbon-label').html("Enter Ribbon Marker");
+	$('#new-clip-concierge-label').html("Enter Concierge Marker");
+	$('#clips-title').html('<h2 class="page-label"><b>Add New Clip</b></h2>');
 	//loadClips();
 }
 

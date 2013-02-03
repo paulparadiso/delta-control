@@ -24,17 +24,17 @@ class ScheduledItem:
 	def get_playlist(self):
 		return self.playlist
 
-class ScheduleManager(threading.Thread):
+class ScheduleManager:
 
 	def __init__(self):
 		print "initing sc."
-		super(ScheduleManager, self).__init__()
+		#super(ScheduleManager, self).__init__()
 		self.host = '127.0.0.1'
 		self.s_port = settings.addresses['self']
 		print "scheduler setting port to " + str(self.s_port)
 		self.r_port = 34310
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		self.sock.bind((self.host, self.r_port))
+		#self.sock.bind((self.host, self.r_port))
 		self.sock.setblocking(0) 
 		self.sItems = []
 		self.redis = redis.Redis()
@@ -42,7 +42,10 @@ class ScheduleManager(threading.Thread):
 		self.time_of_last_update = 0.0
 		self.check_delay = 0.001
 		self.bRunning = True
-
+		self.b_have_new_playlist = False
+		self.new_playlist = ''
+		self.next_update = datetime.datetime.now() - datetime.timedelta(minutes = 10)
+		
 	def run(self):
 		print "thread started."
 		while(self.bRunning == True):
@@ -59,6 +62,12 @@ class ScheduleManager(threading.Thread):
 			self._check_db()
 			time.sleep(60.0)
 
+	def update(self):
+		now = datetime.datetime.now()
+		if now > self.next_update:
+			self._check_db()
+			self.next_update = now + datetime.timedelta(minutes = 1)
+			
 	def stop(self):
 		self.bRunning = False
 
@@ -88,6 +97,13 @@ class ScheduleManager(threading.Thread):
 		t = self._get_time_string()
 		print t
 
+	def have_new_playlist(self):
+		return self.b_have_new_playlist
+		
+	def get_new_playlist(self):
+		self.b_have_new_playlist = False
+		return self.new_playlist
+		
 	def _check_future(self):
 		t_string = self._get_time_string(future = True)
 		db_query = "scheduledItem:" + t_string
@@ -97,8 +113,10 @@ class ScheduleManager(threading.Thread):
 			play_cmd = 'start/' + playlist
 			print "scheduler sending " + playlist
 			#self.redis.delete(query_results[0])
-			self.sock.sendto(play_cmd,settings.addresses['self'])
-
+			#self.sock.sendto(play_cmd,settings.addresses['self'])
+			self.new_playlist = play_cmd
+			self.b_have_new_playlist = True
+			
 	def _check_db(self):
 		t_string = self._get_time_string()
 		db_query = "scheduledItem:" + t_string
@@ -109,6 +127,8 @@ class ScheduleManager(threading.Thread):
 			play_cmd = 'start/' + playlist
 			print "scheduler sending " + playlist
 			#self.redis.delete(query_results[0])
-			self.sock.sendto(play_cmd,settings.addresses['self'])
+			#self.sock.sendto(play_cmd,('127.0.0.1', settings.addresses['self'][1]))
+			self.new_playlist = play_cmd
+			self.b_have_new_playlist = True
 		self._check_future()
 
