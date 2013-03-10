@@ -159,9 +159,9 @@ class PlaylistManager(threading.Thread):
 		print "starting playlist - " + item
 		retr_list = self.redis.get('playlist:' + item)
 		if(retr_list):
-			self.wait_list = []
+			#self.wait_list = []
 			self.current_playlist = Playlist(json.loads(retr_list))
-			self._advance_playlist()
+			#self._advance_playlist()
 
 	def _advance_playlist(self):
 		if not self.current_playlist:
