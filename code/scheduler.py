@@ -66,7 +66,7 @@ class ScheduleManager:
 		now = datetime.datetime.now()
 		if now > self.next_update:
 			self._check_db()
-			self.next_update = now + datetime.timedelta(minutes = 1)
+			self.next_update = now + datetime.timedelta(seconds = 60)
 			
 	def stop(self):
 		self.bRunning = False

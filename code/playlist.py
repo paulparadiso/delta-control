@@ -81,6 +81,7 @@ class PlaylistManager(threading.Thread):
 		print "playlist manager awake and listening."
 		default_playlist = self.redis.get('defaultPlaylist')
 		self._start_playlist(default_playlist)
+		self._advance_playlist()
 		while(self.bRunning == True):
 			try:
 				self._wait_for_message()
@@ -162,6 +163,8 @@ class PlaylistManager(threading.Thread):
 			#self.wait_list = []
 			self.current_playlist = Playlist(json.loads(retr_list))
 			#self._advance_playlist()
+		else:
+			print "blank playlist"
 
 	def _advance_playlist(self):
 		if not self.current_playlist:
@@ -173,6 +176,7 @@ class PlaylistManager(threading.Thread):
 		if next_item == "__done__":
 			default_playlist = self.redis.get('defaultPlaylist')
 			self._start_playlist(default_playlist)
+			self._advance_playlist()
 		else:
 			self._send_playlist_item(next_item)
 
