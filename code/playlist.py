@@ -122,10 +122,12 @@ class PlaylistManager(threading.Thread):
 			plist = self.sm.get_new_playlist()
 			print "received new playlist - " + plist
 			self._parse_message(plist)
-		if self.new_message != None:
+		self.new_message = self.redis.get('playlist_cmd')
+		if self.new_message != 'None':
 			print "new message"
 			self._parse_message(self.new_message)
-			self.new_message = None
+			self.new_message = 'None'
+			self.redis.set('playlist_cmd','None')
 		#ready = select.select([self.sock], [], [], 1.0)
 		#if ready:
 		#	data = self.sock.recv(10000)
