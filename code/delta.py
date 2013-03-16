@@ -23,9 +23,7 @@ snd_msg_port = settings.addresses['self']
 rib_sock = settings.addresses['ribbon']
 con_sock = settings.addresses['concierge']
 
-pm = PlaylistManager()
-pm.setDaemon(True)
-pm.start()
+pm = None
 
 days_in_month = {
 	'01':31,
@@ -74,9 +72,9 @@ def clear_date(date):
 class Index:
 
 	def GET(self):
-		web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
-		web.header('Cache-Control', 'post-check=0, pre-check=0', False)
-		web.header('Pragma', 'no-cache')
+		#web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
+		#web.header('Cache-Control', 'post-check=0, pre-check=0', False)
+		#web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('master')
 		playlist_keys = redis.keys('playlist:*')
@@ -89,9 +87,9 @@ class Index:
 class Scheduling:
 
 	def GET(self):
-		web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
-		web.header('Cache-Control', 'post-check=0, pre-check=0', False)
-		web.header('Pragma', 'no-cache')
+		#web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
+		#web.header('Cache-Control', 'post-check=0, pre-check=0', False)
+		#web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('scheduling')
 		playlist_keys = redis.keys("playlist:*")
@@ -103,9 +101,9 @@ class Scheduling:
 class Playlists:
 
 	def GET(self):
-		web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
-		web.header('Cache-Control', 'post-check=0, pre-check=0', False)
-		web.header('Pragma', 'no-cache')
+		#web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
+		#web.header('Cache-Control', 'post-check=0, pre-check=0', False)
+		#web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('playlists')
 		playlists = {}
@@ -137,9 +135,9 @@ class Playlists:
 class Clips:
 
 	def GET(self):
-		web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
-		web.header('Cache-Control', 'post-check=0, pre-check=0', False)
-		web.header('Pragma', 'no-cache')
+		#web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
+		#web.header('Cache-Control', 'post-check=0, pre-check=0', False)
+		#web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('clips')
 		cue_keys = redis.keys("cue:*")
@@ -184,6 +182,7 @@ class Command:
 			self._control_cmd(params.cmd)
 			
 	def _start_playlist(self, plist):
+		global pm
 		#print "starting playlist - " + plist
 		play_cmd = 'start/' + plist + '/now'
 		#snd_msg_sock.sendto(play_cmd,settings.addresses['self'])
@@ -191,6 +190,7 @@ class Command:
 		
 	def _control_cmd(self, cmd):	
 		#print "sending playback command - " + cmd
+		global pm
 		control_cmd = settings.commands[cmd]
 		print "sending - " + control_cmd
 		if cmd == "skip":
@@ -396,6 +396,9 @@ if __name__ == "__main__":
 	#sm = ScheduleManager()
 	#sm.setDaemon(True)	
 	#sm.start()
+	pm = PlaylistManager()
+	pm.setDaemon(True)
+	pm.start()
 	app = web.application(urls, globals())
 	app.add_processor(mutex_processor())
 	app.run()
