@@ -8,6 +8,7 @@ commands = {
 	'skip': 'SKIP',
 	'goto': "GOTOMARKER \"%s\" play\r",
 	'wait': "%s_DONE",
+	'startup': "SYSTEM_ON",
 }
 """
 Local settings

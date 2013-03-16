@@ -3,10 +3,15 @@ import redis
 import json
 import socket
 import settings
+import time
 from datetime import date, timedelta
 from settings import commands, addresses
 from playlist import PlaylistManager
 from scheduler import ScheduleManager
+from threading import Lock
+
+time.sleep(10.0)
+print "starting..."
 
 """
 SndMsg socket for testing playlist manager.
@@ -64,6 +69,7 @@ def clear_date(date):
 	date_keys = redis.keys('scheduledItem:' + date + ":*")
 	for key in date_keys:
 		redis.delete(key)
+	redis.save()
 
 class Index:
 
@@ -108,7 +114,7 @@ class Playlists:
 		cue_keys = redis.keys('cue:*')
 		for i in cue_keys:
 			cues.append(i.split(':')[1])
-		print cues
+		#print cues
 		for i in playlist_keys:
 			playlist_name = i.split(':')[1]
 			playlist = json.loads(redis.get(i))
@@ -126,7 +132,7 @@ class Playlists:
 		plist = plist_str.split(":")
 		del plist[-1]
 		redis.set('playlist:' + plist_name, json.dumps(plist))
-
+		redis.save()
 
 class Clips:
 
@@ -150,6 +156,7 @@ class Clips:
 		#editedClip = params.editedClip
 		#redis.delete('cue:' + editedClip);
 		redis.set("cue:" + clipName, ribbonCue + ':' + conciergeCue)
+		redis.save()
 
 class SndMsg:
 
@@ -178,7 +185,7 @@ class Command:
 			
 	def _start_playlist(self, plist):
 		#print "starting playlist - " + plist
-		play_cmd = 'start/' + plist
+		play_cmd = 'start/' + plist + '/now'
 		#snd_msg_sock.sendto(play_cmd,settings.addresses['self'])
 		pm.set_message(play_cmd)
 		
@@ -248,6 +255,7 @@ class Date:
 		keys = redis.keys('scheduledItem:' + _date + ':*')
 		for i in keys:
 			redis.delete(i)
+		redis.save()
 
 	def _clear_week(self, _date):
 		date_lst = _date.split('/')
@@ -283,6 +291,7 @@ class Date:
 				continue
 			print "setting - " + _date
 			redis.set("scheduledItem:" + _date + ":" + key, sch[key])
+		redis.save()
 
 	def _set_month(self, _date, sch):
 		date_lst = _date.split('/')
@@ -341,7 +350,9 @@ class SetDefault:
 	def POST(self):
 		params = web.input()
 		playlist = params.plist
+		print "setting " + playlist + " to default"
 		redis.set('defaultPlaylist', playlist)
+		redis.save()
 
 class GetClips:
 
@@ -351,7 +362,7 @@ class GetClips:
 		for i in cue_keys:
 			cueName = i.split(':')[1]
 			cues[cueName] = redis.get(i)
-		print cues
+		#print cues
 		return json.dumps(cues)
 
 class ClearPlaylists:
@@ -360,6 +371,7 @@ class ClearPlaylists:
 		playlist_keys = redis.keys('playlist:*')
 		for i in playlist_keys:
 			redis.delete(i)
+		redis.save()
 
 class ClearCues:
 
@@ -367,10 +379,23 @@ class ClearCues:
 		cue_keys = redis.keys('cue:*')
 		for i in cue_keys:
 			redis.delete(i)
+		redis.save()
 
+def mutex_processor():
+    mutex = Lock()
+
+    def processor_func(handle):
+        mutex.acquire()
+        try:
+            return handle()
+        finally:
+            mutex.release()
+    return processor_func
+		
 if __name__ == "__main__":
 	#sm = ScheduleManager()
 	#sm.setDaemon(True)	
 	#sm.start()
 	app = web.application(urls, globals())
+	app.add_processor(mutex_processor())
 	app.run()

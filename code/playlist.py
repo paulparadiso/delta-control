@@ -73,7 +73,8 @@ class PlaylistManager(threading.Thread):
 		
 	def set_message(self, message):
 		self.new_message = message
-
+		print self.new_message
+		
 	def stop(self):	
 		self.bRunning = False
 
@@ -103,6 +104,7 @@ class PlaylistManager(threading.Thread):
 				print "waitlist now has %d items" % (len(self.wait_list))
 				if len(self.wait_list) < 2:
 					return True
+					return True
 		return False
 
 	def _wait_for_message(self):
@@ -121,6 +123,7 @@ class PlaylistManager(threading.Thread):
 			print "received new playlist - " + plist
 			self._parse_message(plist)
 		if self.new_message != None:
+			print "new message"
 			self._parse_message(self.new_message)
 			self.new_message = None
 		#ready = select.select([self.sock], [], [], 1.0)
@@ -133,16 +136,26 @@ class PlaylistManager(threading.Thread):
 			if(len(res) > 0):
 				cmd = res[0]
 				item = res[1]
-				self._process_message(cmd, item)
+				if(len(res) > 2):
+					extra = res[2]
+				else:
+					extra = None
+				self._process_message(cmd, item, extra)
+			return
+		if settings.commands['startup'] in data:
+			self._advance_playlist()
 			return
 		if len(self.wait_list) > 0:
 			if self._check_wait_list(data):
 				self._advance_playlist()
 				return
 
-	def _process_message(self, cmd, item):
+	def _process_message(self, cmd, item, extra):
 		if(cmd == 'start'):
 			self._start_playlist(item)
+			if extra != None:
+				if extra == 'now':
+					self._advance_playlist()
 		if(cmd == 'stop'):
 			self._stop_playlist(item)
 		if cmd == 'cmd':
@@ -170,6 +183,8 @@ class PlaylistManager(threading.Thread):
 		if not self.current_playlist:
 			return
 		self.wait_list = []
+		#for i in self.wait_list:
+		#	self.wait_list.remove(i)
 		next_item = None
 		while next_item == None:
 			next_item = self.current_playlist.get_next_item()
@@ -187,6 +202,7 @@ class PlaylistManager(threading.Thread):
 		ribbon_msg = settings.commands['goto'] % (messages[0])
 		ribbon_wait = settings.commands['wait'] % (messages[0])
 		self.wait_list.append(ribbon_wait)
+		print "wait_list = " + self.wait_list[0]
 		self.sock.sendto(ribbon_msg, settings.addresses['ribbon'])
 		if len(messages) > 1:
 			concierge_msg = settings.commands['goto'] % (messages[1])

@@ -59,9 +59,10 @@ class ScheduleManager:
 			#self.print_time()
 			#self.sock.sendto("checking for get_playlist",(self.host, self.s_port))
 			#elf.time_of_last_update = now;
-			self._check_db()
-			time.sleep(60.0)
-
+			#self._check_db()
+			#time.sleep(60.0)
+			pass
+			
 	def update(self):
 		now = datetime.datetime.now()
 		if now > self.next_update:
