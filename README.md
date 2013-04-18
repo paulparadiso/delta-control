@@ -8,6 +8,8 @@ Running:
 
 	Start the redis server first.  The run the code/delta.py file.  The site can be accessed at http://localhost:8080.
 
+Files by directory
+
 code:
 	
 	delta.py - The main server file.  Responsible for serving the UI templates as well as communicating with the external video equipment over UDP.  
