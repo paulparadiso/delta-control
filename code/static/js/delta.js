@@ -25,6 +25,10 @@ function init(){
 	//Cufon.replace('.hp-text');
 }
 
+/*
+The datepicker used by the scheduler.
+*/
+
 function initDatepicker(){
 	var today = new Date();
 	$(function() {
@@ -54,6 +58,10 @@ function initDatepicker(){
 	updateScheduler(schedulerDate);
 }
 
+/*
+Post a test message to the server.
+*/
+
 function sndMsg(){
 	msg = $('#msg-input').val()
 	$.ajax({
@@ -62,6 +70,10 @@ function sndMsg(){
 		data:{msg:msg},
 	})
 }
+
+/*
+Sync a date on the scheduler UI to the database.
+*/
 
 function updateScheduler(date){
 	$.ajax({
@@ -73,6 +85,10 @@ function updateScheduler(date){
 		}
 	})
 }
+
+/*
+Clear the scheduler.  Called before setting dates.
+*/
 
 function resetScheduler(){
 	for(var i = 0; i < 24; i++){
@@ -93,6 +109,11 @@ function resetScheduler(){
 	}
 }
 
+/*
+Load the scheduler slots with their corresponding playlists.
+Slots are selected by parsing the time building the div id with them.
+*/
+
 function loadScheduler(data){
 	var playlists = eval('(' + data + ')');
 	resetScheduler(); 
@@ -112,6 +133,10 @@ function loadScheduler(data){
 		}
 	}
 }
+
+/*
+Get the schedule for a particular date.
+*/
 
 function getSchedule(){
 	//var date = $('#datepicker').val();
@@ -165,6 +190,10 @@ function getSchedule(){
 	return data;
 }
 
+/*
+Save the the schedule as configured on the scheduler UI.
+*/
+
 function saveSchedule(mode){
 	var schedule = getSchedule();
 	schedule['action'] = 'set'
@@ -184,6 +213,10 @@ function saveSchedule(mode){
 function navClicked(nav){
 	$('.')
 }
+
+/*
+Setup a playlist div.
+*/
 
 function openPlaylistList(div){
 	var listDiv = "#" + div;
@@ -236,6 +269,10 @@ function clearCurrentPlaylist(){
 	currentPlaylist = new Array();
 }
 
+/*
+Send a control command the the server.
+*/
+
 function sendCmd(cmdType, command){
 	//alert(command + " pressed.");
 	$.ajax({
@@ -245,12 +282,20 @@ function sendCmd(cmdType, command){
 	});
 }
 
+/*
+Send a playlist to the server.
+*/
+
 function sendPlaylist(){
 	var dd = document.getElementById("playlist-dropdown");
 	var selectedPlaylist = dd.options[dd.selectedIndex].value;
 	//alert(selectedPlaylist + " selected");
 	sendCmd('playlist',selectedPlaylist);
 }
+
+/*
+Swap the playlist tabs.  Only relevant for tabbed design versions.
+*/
 
 function swapPlaylistTab(currentTab){
 	var oldTab = '';
@@ -276,6 +321,11 @@ function swapPlaylistTab(currentTab){
 	$(newDiv).css('display','');
 }
 
+/*
+Request a playlist from the server and then use it to
+populate a playlist div.
+*/
+
 function getPlaylist(plist){
 	$.ajax({
 		url:'getplaylist',
@@ -288,6 +338,10 @@ function getPlaylist(plist){
 		}
 	})
 }
+
+/*
+Edit a playlist.  Switches views.
+*/
 
 function editPlaylist(plist){
 	if(plist){
@@ -323,6 +377,10 @@ function editPlaylist(plist){
 	}
 }
 
+/*
+Send a new default playlist to the server.
+*/
+
 function makeDefault(plist){
 	$.ajax({
 		url:'setdefault',
@@ -334,6 +392,10 @@ function makeDefault(plist){
 		}
 	});
 }
+
+/*
+Set the view for creating a new playlist.
+*/
 
 function newPlaylist(){
 	//loadClips();
@@ -355,6 +417,10 @@ function newPlaylist(){
 	activateRenamePlaylist();
 	//loadClips();
 }
+
+/*
+Set up the view for editing a cue.
+*/
 
 function editClip(clip){
 	if(clip){
@@ -401,6 +467,10 @@ function addClip(b){
 	//loadClips();
 }
 
+/*
+Retrieve a clip from the view and send it to the server.
+*/
+
 function saveClip(){
 	var clipName = $.trim($('#new-clip-name').val());
 	if(clipName == ''){
@@ -431,6 +501,10 @@ function saveClip(){
 		}
 	});
 }
+
+/*
+Get all clips from the server and setup the their view.
+*/
 
 function loadClips(){
 	$.ajax({
@@ -484,8 +558,11 @@ function loadDropdown(){
 }
 
 function swapClipsTab(currentTab){
-
 }
+
+/*
+Setup the playlist.
+*/
 
 function openPlaylist(plist){
 	var plusSrc = 'static/img/plus.png';
@@ -503,6 +580,10 @@ function openPlaylist(plist){
 	}
 }
 
+/*
+Add a cue to the playlist being built.
+*/
+
 function addCue(cue){
 	var cueDropdown = document.getElementById("cue-dropdown")
 	var cue = cueDropdown.options[cueDropdown.selectedIndex].value;
@@ -511,6 +592,10 @@ function addCue(cue){
 		populatePlaylist();
 	}
 }
+
+/*
+Insert a cue into the current playlist.
+*/
 
 function insertCue(cue){
 	var cueDropdown = document.getElementById("cue-dropdown");
@@ -523,12 +608,20 @@ function insertCue(cue){
 	}
 }
 
+/*
+Remove a cue from the playlist.
+*/
+
 function removeCue(cue){
 	var cueIndex = parseInt(cue);
 	currentPlaylist.splice(cueIndex,1);
 	deactivateHighlight();
 	populatePlaylist();
 } 
+
+/*
+Build a playlist view from the playlist currently being edited.
+*/
 
 function populatePlaylist(){
 	var playlistHTML = ''
@@ -542,6 +635,10 @@ function populatePlaylist(){
 
 }
 
+/*
+Setup the playlist rename.
+*/
+
 function activateRenamePlaylist(){
 	var name = $('#playlist-name-readout').html();
 	//alert("changing name of " + name);
@@ -551,6 +648,10 @@ function activateRenamePlaylist(){
 	$('#playlist-name-rename').css('visibility','hidden');
 	bRename = true;
 }
+
+/*
+Send a new playlist to the server.
+*/
 
 function savePlaylist(){
 	if(bRename){
@@ -588,6 +689,10 @@ function deactivateHighlight(){
 	$('#cue-insert').css('display','none');
 	$('#cue-add').css('display','');
 }
+
+/*
+Toggle the highlight on the playlist item.
+*/
 
 function toggleHighlight(cue){
 	if(bHaveHighlightedCue == true){

@@ -23,11 +23,12 @@ class ScheduledItem:
 
 	def get_playlist(self):
 		return self.playlist
-
-"""
-Manage scheduled items.  New scheduled items are saved by the main server in delta.py.
-Check for scheduled items every minutes and launch if they exist.
-"""
+#####
+#
+# Manage scheduled items.  New scheduled items are saved by the main server in delta.py.
+# Check for scheduled items every minutes and launch if they exist.
+#
+#####
 
 class ScheduleManager:
 
@@ -68,9 +69,7 @@ class ScheduleManager:
 			#time.sleep(60.0)
 			pass
 
-	"""
-	Update.  Get the current time and check if there is a corresponding item in the database.
-	"""
+	#Update.  Get the current time and check if there is a corresponding item in the database.
 			
 	def update(self):
 		now = datetime.datetime.now()
@@ -81,9 +80,7 @@ class ScheduleManager:
 	def stop(self):
 		self.bRunning = False
 
-	"""
-	Convert the datetime string to a javascript compatible date string.
-	"""
+	#Convert the datetime string to a javascript compatible date string.
 
 	def _get_time_string(self, future = False):
 		now = datetime.datetime.now()
@@ -118,10 +115,12 @@ class ScheduleManager:
 		self.b_have_new_playlist = False
 		return self.new_playlist
 	
-	"""
-	Check to see if there is going to be a scheduled item soon.  If so send 
-	out the power on command.
-	"""
+	#####
+	#
+	# Check to see if there is going to be a scheduled item soon.  If so send 
+	# out the power on command.
+	#
+	#####
 
 	def _check_future(self):
 		t_string = self._get_time_string(future = True)
@@ -135,10 +134,8 @@ class ScheduleManager:
 			#self.sock.sendto(play_cmd,settings.addresses['self'])
 			self.new_playlist = play_cmd
 			self.b_have_new_playlist = True
-	
-	"""
-	Get the current timestring and check the database for a scheduled item with that time.
-	"""
+
+	#Get the current timestring and check the database for a scheduled item with that time.
 
 	def _check_db(self):
 		t_string = self._get_time_string()

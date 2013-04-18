@@ -1,6 +1,8 @@
-"""
-Default values for control commands and machine addresses.
-"""
+#####
+#
+# Default values for control commands and machine addresses.
+#
+#####
 
 commands = {
 	'power_on': 'POWER_ON\r',
@@ -14,9 +16,12 @@ commands = {
 	'wait': "%s_DONE",
 	'startup': "SYSTEM_ON",
 }
-"""
-Local settings
-"""
+
+#####
+#
+# Local settings
+#
+#####
 
 addresses = {
 	'self': ('127.0.0.1', 8920),
@@ -25,10 +30,12 @@ addresses = {
 	'crestron': ('127.0.0.1', 8923)
 }
 
-"""
-Production settings
-self = 10.0.90.20
-"""
+#####
+#
+# Production settings
+# self = 10.0.90.20
+#
+#####
 
 #addresses = {
 #	'self': ('10.0.90.20', 8920),

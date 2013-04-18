@@ -7,9 +7,7 @@ import redis
 import settings
 import scheduler
 
-"""
-A list of strings that can be used retrieve cues for the video servers.  
-"""
+#A list of strings that can be used retrieve cues for the video servers.  
 
 class Playlist:
 
@@ -51,13 +49,15 @@ class Playlist:
 	def make_playlist_from_json(self, j_list):
 		pass
 
-"""
-Used to manage load and manage playlists.  Runs on it's own thread and contains a schedule manager.
-When new cues are sent a waitlist is created with the cue names concatenated with the video server 
-termination string.  When it receives the waitlist strings it starts the next item in the playlist.
-If the playlist is finished the default playlist is loaded and started.  New playlists are loaded
-seamlessly and do not start until the currently playing cues are finished.
-"""
+#####
+#
+# Used to manage load and manage playlists.  Runs on it's own thread and contains a schedule manager.
+# When new cues are sent a waitlist is created with the cue names concatenated with the video server 
+# termination string.  When it receives the waitlist strings it starts the next item in the playlist.
+# If the playlist is finished the default playlist is loaded and started.  New playlists are loaded
+# seamlessly and do not start until the currently playing cues are finished.
+#
+#####
 
 class PlaylistManager(threading.Thread):
 
@@ -82,10 +82,8 @@ class PlaylistManager(threading.Thread):
 		self.wait_list = []
 		self.sm = scheduler.ScheduleManager()
 		self.new_message = None
-	
-	"""
-	Set incoming messages from the localhost server.
-	"""
+
+	#Set incoming messages from the localhost server.
 
 	def set_message(self, message):
 		self.new_message = message
@@ -94,9 +92,7 @@ class PlaylistManager(threading.Thread):
 	def stop(self):	
 		self.bRunning = False
 
-	"""
-	Thread loop.
-	"""
+	#Thread loop.
 
 	def run(self):
 		print "playlist manager awake and listening."
@@ -113,9 +109,7 @@ class PlaylistManager(threading.Thread):
 		self.bRunning = True
 		super(PlaylistManager, self).start()
 
-	"""
-	Check incoming messages against the waitlist.
-	"""
+	#Check incoming messages against the waitlist.
 
 	def _check_wait_list(self, s):
 		print "checking for %s in waitlist" % (s)
@@ -130,9 +124,7 @@ class PlaylistManager(threading.Thread):
 					return True
 		return False
 
-	"""
-	Check for incoming UDP messages.
-	"""
+	#Check for incoming UDP messages.
 
 	def _wait_for_message(self):
 		try:
@@ -144,17 +136,17 @@ class PlaylistManager(threading.Thread):
 				self._parse_message(data)
 		except socket.timeout:
 			pass
-		"""
-		Update the scheduler.
-		"""
+		
+		#Update the scheduler.
+		
 		self.sm.update()
 		if self.sm.have_new_playlist():
 			plist = self.sm.get_new_playlist()
 			print "received new playlist - " + plist
 			self._parse_message(plist)
-		"""
-		Check if there is new message waiting in the database.
-		"""
+		
+		#Check if there is new message waiting in the database.
+		
 		self.new_message = self.redis.get('playlist_cmd')
 		if self.new_message != 'None':
 			print "new message"
@@ -165,9 +157,8 @@ class PlaylistManager(threading.Thread):
 		#if ready:
 		#	data = self.sock.recv(10000)
 
-	"""
-	Parse incoming UDP messages.
-	"""
+	
+	#Parse incoming UDP messages.
 
 	def _parse_message(self, data, addr = None):
 		if '/' in data:
@@ -189,9 +180,7 @@ class PlaylistManager(threading.Thread):
 				self._advance_playlist()
 				return
 
-	"""
-	Route parsed messages.
-	"""
+	#Route parsed messages.
 
 	def _process_message(self, cmd, item, extra):
 		if(cmd == 'start'):
@@ -206,10 +195,12 @@ class PlaylistManager(threading.Thread):
 				print "playlist got skip."
 				self._advance_playlist()
 
-	"""
-	Start a new playlist without interrupting the current cue.  If this if is a power on or off 
-	the appropriate power commands will be sent out.
-	"""
+	#####
+	#
+	# Start a new playlist without interrupting the current cue.  If this if is a power on or off 
+	# the appropriate power commands will be sent out.
+	# 
+	#####
 
 	def _start_playlist(self, item):
 		if item == 'Power On':
@@ -227,9 +218,7 @@ class PlaylistManager(threading.Thread):
 		else:
 			print "blank playlist"
 
-	"""
-	Clear the waitlist and send the next set of cues.
-	"""
+	#Clear the waitlist and send the next set of cues.
 
 	def _advance_playlist(self):
 		if not self.current_playlist:
@@ -247,9 +236,7 @@ class PlaylistManager(threading.Thread):
 		else:
 			self._send_playlist_item(next_item)
 
-	"""
-	Send cues to video servers.
-	"""
+	#Send cues to video servers.
 
 	def _send_playlist_item(self, item):
 		#msg = '/start/' + item

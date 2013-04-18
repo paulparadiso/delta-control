@@ -13,9 +13,7 @@ from threading import Lock
 time.sleep(10.0)
 print "starting..."
 
-"""
-SndMsg socket for testing playlist manager.
-"""
+#SndMsg socket for testing playlist manager.
 
 snd_msg_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 snd_msg_host = '127.0.0.1'
@@ -23,9 +21,7 @@ snd_msg_port = settings.addresses['self']
 rib_sock = settings.addresses['ribbon']
 con_sock = settings.addresses['concierge']
 
-"""
-Dictionary to lookup up number of days in a month.
-"""
+#Dictionary to lookup up number of days in a month.
 
 days_in_month = {
 	'01':31,
@@ -71,9 +67,7 @@ def clear_date(date):
 		redis.delete(key)
 	redis.save()
 
-"""
-master.html
-"""
+#master.html
 
 class Index:
 
@@ -86,9 +80,7 @@ class Index:
 			playlists.append(i.split(':')[1])
 		return render.master(header, nav, playlists)
 
-"""
-scheduling.html
-"""
+#scheduling.html
 
 class Scheduling:
 
@@ -101,9 +93,7 @@ class Scheduling:
 			playlists.append(i.split(':')[1])
 		return render.scheduling(header, nav, playlists)
 
-"""
-playlists.html
-"""
+#playlists.html
 
 class Playlists:
 
@@ -122,9 +112,7 @@ class Playlists:
 			playlists[playlist_name] = playlist
 		return render.playlists(header, nav, playlists, cues)
 
-	"""
-	Receive new playlists and enter them into the database.
-	"""
+	#Receive new playlists and enter them into the database.
 
 	def POST(self):
 		params = web.input()
@@ -137,9 +125,7 @@ class Playlists:
 		redis.set('playlist:' + plist_name, json.dumps(plist))
 		redis.save()
 
-"""
-clips.html
-"""
+#clips.html
 
 class Clips:
 
@@ -152,9 +138,7 @@ class Clips:
 			cues.append(i.split(':')[1])
 		return render.clips(header, nav, cues)
 
-	"""
-	Receive new clip names and enter them into the database.
-	"""
+	#Receive new clip names and enter them into the database.
 
 	def POST(self):
 		params = web.input()
@@ -164,9 +148,7 @@ class Clips:
 		redis.set("cue:" + clipName, ribbonCue + ':' + conciergeCue)
 		redis.save()
 
-"""
-sndmsg.html.  A 'hidden' file for testing.
-"""
+#sndmsg.html.  A 'hidden' file for testing.
 
 class SndMsg:
 
@@ -182,10 +164,8 @@ class SndMsg:
 		print "Sending message - " + msg
 		snd_msg_sock.sendto(msg, settings.addresses['self'])
 
-"""
-Receive commands from the UI to be sent to either the playlist manager or the video
-server.
-"""
+#Receive commands from the UI to be sent to either the playlist manager or the video
+#server.
 
 class Command:
 	
@@ -196,17 +176,13 @@ class Command:
 		if params.cmdtype == 'control':
 			self._control_cmd(params.cmd)
 	
-	"""
-	Start a new playlist.
-	"""
+	#Start a new playlist.
 
 	def _start_playlist(self, plist):
 		play_cmd = 'start/' + plist + '/now'
 		redis.set('playlist_cmd', play_cmd)
 
-	"""
-	Send a command to the video server.
-	"""
+	#Send a command to the video server.
 
 	def _control_cmd(self, cmd):	
 		control_cmd = settings.commands[cmd]
@@ -222,9 +198,7 @@ class Command:
 		snd_msg_sock.sendto(control_cmd, rib_sock)
 		snd_msg_sock.sendto(control_cmd, con_sock)
 
-"""
-Manage scehduled items.
-"""
+#Manage scheduled items.
 
 class Date:
 
@@ -235,9 +209,7 @@ class Date:
 		if params.action == 'set':
 			return self._set_scheduled_items(params)
 
-	"""
-	Return all scheduled items.
-	"""
+	#Return all scheduled items.
 
 	def _get_scheduled_items(self, params):
 		date = params.date
@@ -253,9 +225,7 @@ class Date:
 			scheduled_items[hour + ':' + minute] = playlist
 		return json.dumps(scheduled_items)
 
-	"""
-	Create a new scheduled item.
-	"""
+	#Create a new scheduled item.
 
 	def _set_scheduled_items(self, params):
 		print params.keys()
@@ -272,9 +242,7 @@ class Date:
 			self._clear_month(date)
 			self._set_month(date, params)
 
-	"""
-	Calculate the start date of a week.
-	"""
+	#Calculate the start date of a week.
 
 	def _get_week_start(self, week, year):
 		d = date(year, 1, 1) 	   
@@ -285,9 +253,7 @@ class Date:
 		delta = timedelta(days=-delta_days, weeks=delta_weeks)
 		return d + delta
 
-	"""
-	Clear the scheduler for a particular day.
-	"""
+	#Clear the scheduler for a particular day.
 
 	def _clear_day(self, _date):
 		print "clearing " + _date
@@ -296,9 +262,7 @@ class Date:
 			redis.delete(i)
 		redis.save()
 
-	"""
-	Clear a full week.
-	"""
+	#Clear a full week.
 
 	def _clear_week(self, _date):
 		date_lst = _date.split('/')
@@ -319,9 +283,7 @@ class Date:
 			date_str = month + '/' + day + '/' + year
 			self._clear_day(date_str)
 
-	"""
-	Clear a full month.
-	"""
+	#Clear a full month.
 
 	def _clear_month(self, _date):
 		date_lst = _date.split('/')
@@ -332,9 +294,7 @@ class Date:
 			new_date = month + '/' + day + '/' + year
 			self._clear_day(new_date)
 
-	"""
-	Set the scedule for a day.
-	"""
+	#Set the scedule for a day.
 
 	def _set_day(self, _date, sch):
 		for key in sch.keys():
@@ -344,9 +304,7 @@ class Date:
 			redis.set("scheduledItem:" + _date + ":" + key, sch[key])
 		redis.save()
 
-	"""
-	Copy the a day's schedule to the entire month.
-	"""
+	#Copy the a day's schedule to the entire month.
 
 	def _set_month(self, _date, sch):
 		date_lst = _date.split('/')
@@ -363,9 +321,7 @@ class Date:
 			new_date = month + '/' + day + '/' + year
 			self._set_day(new_date, sch)
 
-	"""
-	Copy a days schedule to the entire week.
-	"""
+	#Copy a days schedule to the entire week.
 
 	def _set_week(self, _date, sch):
 		date_lst = _date.split('/')
@@ -396,9 +352,7 @@ class GetPlaylists:
 		print playlists
 		return json.dumps(playlists)
 
-"""
-Get a particular playlist.
-"""
+#Get a particular playlist.
 
 class GetPlaylist:
 
@@ -408,9 +362,9 @@ class GetPlaylist:
 		plist = redis.get('playlist:' + playlist)
 		return plist
 
-"""
-Set the default playlist.
-"""
+
+#Set the default playlist.
+
 
 class SetDefault:
 
@@ -421,9 +375,7 @@ class SetDefault:
 		redis.set('defaultPlaylist', playlist)
 		redis.save()
 
-"""
-Get list of clips.
-"""
+#Get list of clips.
 
 class GetClips:
 
@@ -436,9 +388,7 @@ class GetClips:
 		#print cues
 		return json.dumps(cues)
 
-"""
-Clear all playlists.
-"""
+#Clear all playlists.
 
 class ClearPlaylists:
 
@@ -448,9 +398,7 @@ class ClearPlaylists:
 			redis.delete(i)
 		redis.save()
 
-"""
-Clear all cues.
-"""
+#Clear all cues.
 
 class ClearCues:
 
