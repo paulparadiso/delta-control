@@ -28,6 +28,10 @@ code/static:
 
 	js/delta.js - The main javascript file used to communicate between the UI and the server.
 
+code/utils:
+	
+	A few scripts useful for batch loading playlists and cues from variously formatted files.
+
 loadDB:
 
 	load_db.py - Batch load playlists, cues and scheduled items into the database.  Will check for a file called input.txt or whatever is specified on the command line.
