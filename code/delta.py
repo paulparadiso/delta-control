@@ -23,6 +23,10 @@ snd_msg_port = settings.addresses['self']
 rib_sock = settings.addresses['ribbon']
 con_sock = settings.addresses['concierge']
 
+"""
+Dictionary to lookup up number of days in a month.
+"""
+
 days_in_month = {
 	'01':31,
 	'02':29,
@@ -67,27 +71,28 @@ def clear_date(date):
 		redis.delete(key)
 	redis.save()
 
+"""
+master.html
+"""
+
 class Index:
 
 	def GET(self):
-		#web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
-		#web.header('Cache-Control', 'post-check=0, pre-check=0', False)
-		#web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('master')
 		playlist_keys = redis.keys('playlist:*')
-		#playlists = ['test1','test2','test3','test4','test5']
 		playlists = []
 		for i in playlist_keys:
 			playlists.append(i.split(':')[1])
 		return render.master(header, nav, playlists)
 
+"""
+scheduling.html
+"""
+
 class Scheduling:
 
 	def GET(self):
-		#web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
-		#web.header('Cache-Control', 'post-check=0, pre-check=0', False)
-		#web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('scheduling')
 		playlist_keys = redis.keys("playlist:*")
@@ -96,12 +101,13 @@ class Scheduling:
 			playlists.append(i.split(':')[1])
 		return render.scheduling(header, nav, playlists)
 
+"""
+playlists.html
+"""
+
 class Playlists:
 
 	def GET(self):
-		#web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
-		#web.header('Cache-Control', 'post-check=0, pre-check=0', False)
-		#web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('playlists')
 		playlists = {}
@@ -110,12 +116,15 @@ class Playlists:
 		cue_keys = redis.keys('cue:*')
 		for i in cue_keys:
 			cues.append(i.split(':')[1])
-		#print cues
 		for i in playlist_keys:
 			playlist_name = i.split(':')[1]
 			playlist = json.loads(redis.get(i))
 			playlists[playlist_name] = playlist
 		return render.playlists(header, nav, playlists, cues)
+
+	"""
+	Receive new playlists and enter them into the database.
+	"""
 
 	def POST(self):
 		params = web.input()
@@ -123,19 +132,18 @@ class Playlists:
 		plist_name = plist_name.lstrip()
 		plist_name = plist_name.rstrip()
 		plist_str = params.playlist
-		#print "new playlist - " + plist_name
-		#print plist_str
 		plist = plist_str.split(":")
 		del plist[-1]
 		redis.set('playlist:' + plist_name, json.dumps(plist))
 		redis.save()
 
+"""
+clips.html
+"""
+
 class Clips:
 
 	def GET(self):
-		#web.header('Cache-Control', 'no-store, no-cache, must-revalidate')
-		#web.header('Cache-Control', 'post-check=0, pre-check=0', False)
-		#web.header('Pragma', 'no-cache')
 		header = render.header()
 		nav = render.nav('clips')
 		cue_keys = redis.keys("cue:*")
@@ -144,15 +152,21 @@ class Clips:
 			cues.append(i.split(':')[1])
 		return render.clips(header, nav, cues)
 
+	"""
+	Receive new clip names and enter them into the database.
+	"""
+
 	def POST(self):
 		params = web.input()
 		clipName = params.clipName
 		ribbonCue = params.ribbonCue
 		conciergeCue = params.conciergeCue
-		#editedClip = params.editedClip
-		#redis.delete('cue:' + editedClip);
 		redis.set("cue:" + clipName, ribbonCue + ':' + conciergeCue)
 		redis.save()
+
+"""
+sndmsg.html.  A 'hidden' file for testing.
+"""
 
 class SndMsg:
 
@@ -168,28 +182,33 @@ class SndMsg:
 		print "Sending message - " + msg
 		snd_msg_sock.sendto(msg, settings.addresses['self'])
 
+"""
+Receive commands from the UI to be sent to either the playlist manager or the video
+server.
+"""
+
 class Command:
 	
 	def POST(self):
-		#print d
 		params = web.input()
-		#print "got command - " + params.cmdtype + " - " + params.cmd
 		if params.cmdtype == 'playlist':
 			self._start_playlist(params.cmd)
 		if params.cmdtype == 'control':
 			self._control_cmd(params.cmd)
-			
+	
+	"""
+	Start a new playlist.
+	"""
+
 	def _start_playlist(self, plist):
-		#global pm
-		#print "starting playlist - " + plist
 		play_cmd = 'start/' + plist + '/now'
-		#snd_msg_sock.sendto(play_cmd,settings.addresses['self'])
-		#pm.set_message(play_cmd)
 		redis.set('playlist_cmd', play_cmd)
 
+	"""
+	Send a command to the video server.
+	"""
+
 	def _control_cmd(self, cmd):	
-		#print "sending playback command - " + cmd
-		#global pm
 		control_cmd = settings.commands[cmd]
 		print "sending - " + control_cmd
 		if cmd == "skip":
@@ -203,6 +222,10 @@ class Command:
 		snd_msg_sock.sendto(control_cmd, rib_sock)
 		snd_msg_sock.sendto(control_cmd, con_sock)
 
+"""
+Manage scehduled items.
+"""
+
 class Date:
 
 	def POST(self):
@@ -211,6 +234,10 @@ class Date:
 			return self._get_scheduled_items(params)
 		if params.action == 'set':
 			return self._set_scheduled_items(params)
+
+	"""
+	Return all scheduled items.
+	"""
 
 	def _get_scheduled_items(self, params):
 		date = params.date
@@ -225,6 +252,10 @@ class Date:
 			playlist = redis.get(i)
 			scheduled_items[hour + ':' + minute] = playlist
 		return json.dumps(scheduled_items)
+
+	"""
+	Create a new scheduled item.
+	"""
 
 	def _set_scheduled_items(self, params):
 		print params.keys()
@@ -241,6 +272,10 @@ class Date:
 			self._clear_month(date)
 			self._set_month(date, params)
 
+	"""
+	Calculate the start date of a week.
+	"""
+
 	def _get_week_start(self, week, year):
 		d = date(year, 1, 1) 	   
 		delta_days = d.isoweekday() - 1
@@ -250,12 +285,20 @@ class Date:
 		delta = timedelta(days=-delta_days, weeks=delta_weeks)
 		return d + delta
 
+	"""
+	Clear the scheduler for a particular day.
+	"""
+
 	def _clear_day(self, _date):
 		print "clearing " + _date
 		keys = redis.keys('scheduledItem:' + _date + ':*')
 		for i in keys:
 			redis.delete(i)
 		redis.save()
+
+	"""
+	Clear a full week.
+	"""
 
 	def _clear_week(self, _date):
 		date_lst = _date.split('/')
@@ -276,6 +319,10 @@ class Date:
 			date_str = month + '/' + day + '/' + year
 			self._clear_day(date_str)
 
+	"""
+	Clear a full month.
+	"""
+
 	def _clear_month(self, _date):
 		date_lst = _date.split('/')
 		for i in range(1, days_in_month[date_lst[0]] + 1):
@@ -285,6 +332,10 @@ class Date:
 			new_date = month + '/' + day + '/' + year
 			self._clear_day(new_date)
 
+	"""
+	Set the scedule for a day.
+	"""
+
 	def _set_day(self, _date, sch):
 		for key in sch.keys():
 			if(key == "date" or key == "mode" or key == "action"):
@@ -292,6 +343,10 @@ class Date:
 			print "setting - " + _date
 			redis.set("scheduledItem:" + _date + ":" + key, sch[key])
 		redis.save()
+
+	"""
+	Copy the a day's schedule to the entire month.
+	"""
 
 	def _set_month(self, _date, sch):
 		date_lst = _date.split('/')
@@ -307,6 +362,10 @@ class Date:
 				day = str(i)
 			new_date = month + '/' + day + '/' + year
 			self._set_day(new_date, sch)
+
+	"""
+	Copy a days schedule to the entire week.
+	"""
 
 	def _set_week(self, _date, sch):
 		date_lst = _date.split('/')
@@ -337,6 +396,10 @@ class GetPlaylists:
 		print playlists
 		return json.dumps(playlists)
 
+"""
+Get a particular playlist.
+"""
+
 class GetPlaylist:
 
 	def POST(self):
@@ -344,6 +407,10 @@ class GetPlaylist:
 		playlist = params.playlist
 		plist = redis.get('playlist:' + playlist)
 		return plist
+
+"""
+Set the default playlist.
+"""
 
 class SetDefault:
 
@@ -353,6 +420,10 @@ class SetDefault:
 		print "setting " + playlist + " to default"
 		redis.set('defaultPlaylist', playlist)
 		redis.save()
+
+"""
+Get list of clips.
+"""
 
 class GetClips:
 
@@ -365,6 +436,10 @@ class GetClips:
 		#print cues
 		return json.dumps(cues)
 
+"""
+Clear all playlists.
+"""
+
 class ClearPlaylists:
 
 	def GET(self):
@@ -372,6 +447,10 @@ class ClearPlaylists:
 		for i in playlist_keys:
 			redis.delete(i)
 		redis.save()
+
+"""
+Clear all cues.
+"""
 
 class ClearCues:
 

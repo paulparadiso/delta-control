@@ -1,3 +1,7 @@
+"""
+Default values for control commands and machine addresses.
+"""
+
 commands = {
 	'power_on': 'POWER_ON\r',
 	'power_off': 'POWER_OFF\r',

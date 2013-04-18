@@ -16,6 +16,8 @@ code:
 
 	sceduler.py - Classes to create and check for scheduled events.
 
+	settings.py - Default values for control commands and machine addresses.
+
 code/templates:
 
 	All of the template files for the UI.
