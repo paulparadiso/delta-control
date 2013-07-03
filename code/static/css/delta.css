@@ -113,6 +113,14 @@ img{
 	width: 800px;
 }
 
+.man-img{
+	margin-left: 100px;
+}
+
+.man-text{
+	margin-left: 20px;
+}
+
 #master{
 	height: 25px;
 }
@@ -205,7 +213,7 @@ img{
 	padding-top: 5px;
 }
 
-#playlist-select{
+.select{
 	float: left;
 }
 
@@ -214,7 +222,7 @@ img{
 	color: #007dba;
 }
 
-#playlist-play{
+.play{
 	float: left;
 }
 

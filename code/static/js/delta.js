@@ -294,6 +294,17 @@ function sendPlaylist(){
 }
 
 /*
+Send a clip to the server.
+*/
+
+function sendClip(){
+	var dd = document.getElementById("clip-dropdown");
+	var selectedClip = dd.options[dd.selectedIndex].value;
+	//alert(selectedClip + " selected");
+	sendCmd('clip',selectedClip);
+}
+
+/*
 Swap the playlist tabs.  Only relevant for tabbed design versions.
 */
 

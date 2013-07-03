@@ -1,61 +1,73 @@
-$def with(header, nav, cues)
+$def with(header, nav, playlists, clips)
 $:header
 $:nav
 
-<div id="clips-page" class="sub-page">
-  <div id="clips" class="label">
-    <span id="clips-title" class="page-label"><h2 class="page-label"><b>Current Clip Names</b></h2></span>
+<div id="master-page" class="sub-page">
+  <div id="master" style="margin-left:50px; margin-top:20px">
+    <h2 class="page-label"><b>Master Controls</b></h2>
   </div>
-  <!--
-  <div id="view-edit-clips-tabs" style="margin-left:50px;">
-    <span onclick="swapClipsTab('view')" id="view-tab" class="tab active-tab">
-      <b>View</b>
+  <div id="playback-controls" class="top-bordered-page label" style="">
+    <h2>Playback Controls</h2><br>
+    <span class="playback-control">
+      <img onclick="sendCmd('control','play')" src="static/img/play.png"></img>
+      <br/>
+      <span style="position:relative; left:-2px;">play</span>
     </span>
-    <span onclick="swapClipsTab('edit')" id="edit-tab" class="tab inactive-tab">
-      <b>Edit</b>
-    </span>
-    <span style="margin-top:-1px; display: block; float: left; margin-left: 201px; width:342px; border-bottom: 1px solid black;">
-    </span>
-  </div>
-  -->
-  <div id="clips-view" style="display:''; margin-left:50px;">     
-    <div class="bottom-bordered" style="padding-bottom:48px;">
-      <img style="float:right;" onclick="addClip('true')" src="static/img/add_clip.png"></img>
-    </div>
-    <div id="view-clips">
-      <script type="text/javascript">
-        loadClips();
-      </script>
-    </div>
-  </div>
-  <div id="clips-edit-view" style="display:none; margin-left:50px; margin-top:70px;">
-    <div id="new-clip-left" class="edit-column">
-      <span id="new-clip-name-label">
-        Enter New Name<br>
-      </span>
-      <input type="text" value="" class="new-clip-input" id="new-clip-name"></input>
+    <span class="playback-control control-item">
+      <img onclick="sendCmd('control','pause')" src="static/img/pause.png"></img>
       <br>
-      <span id="new-clip-ribbon-label">
-        Enter Ribbon Marker<br>
-      </span>
-      <input type="text" value="" class="new-clip-input" id="new-clip-ribbon"></input>
+      <span style="position:relative; left:-2px;">pause</span>
+    </span>
+    <span class="playback-control control-item">
+      <img onclick="sendCmd('control','stop')" src="static/img/stop.png"></img>
       <br>
-      <span id="new-clip-concierge-label">
-        Enter Concierge Marker<br>
-      </span>
-      <input type="text" value="" class="new-clip-input" id="new-clip-concierge"></input>
-    </div>
-    <div id="new-clip-right" class="edit-column">
-      <span style="float:right;" onclick="editClip()">
-        <img src="static/img/cancel.png"></img>
-      </span>
-      <span style="float:right;padding-right:20px;" onclick="saveClip()">
-        <img src="static/img/save.png"></img>
-      </span>
-    </div>
+      <span style="position:relative; left:-3px;">stop</span>
+    </span>
+    <span class="playback-control control-item">
+      <img onclick="sendCmd('control', 'skip')" src="static/img/skip.png"></img>
+      <br>
+      <span style="position:relative; left:-3px;">skip</span>
+    </span>
   </div>
-  <div id="new-clip-view" style="display:none; margin-left:50px;">
+  <br>
+  <div id="playlist" class="top-bordered-page" style="margin-left:50px; margin-top: 80px; padding-top:10px; padding-bottom:25px;">
+    <h2>Playlist</h2><br>
+    <span id="playlist-select" class="default select" style="position:relative; top:3px;">
+      <select id="playlist-dropdown" style="width: 150px;">
+        $for i in playlists:
+          <option value="$i" class="hp-text">$i</option>
+      </select>
+    </span>
+    <span id="playlist-play" class="play" style="text-align:center;margin-top:-10px;margin-left:10px;">
+      <img onclick="sendPlaylist()" src="static/img/play.png"></img>
+      <br/>
+      Play now
+    </span> 
   </div>
+  <div id="clip" class="top-bordered-page" style="margin-left:50px; margin-top: 80px; padding-top:10px; padding-bottom:25px;">
+    <h2>Clip</h2><br>
+    <span id="clips-select" class="default select" style="position:relative; top:3px;">
+      <select id="clip-dropdown" style="width: 150px;">
+        $for i in clips:
+          <option value="$i" class="hp-text">$i</option>
+      </select>
+    </span>
+    <span id="clip-play" class="play" style="text-align:center;margin-top:-10px;margin-left:10px;">
+      <img onclick="sendClip()" src="static/img/play.png"></img>
+      <br/>
+      Play now
+    </span> 
+  </div>
+  <div id="power" class="top-bordered-page" style="margin-left:50px;padding-top:20px; margin-top:80px;">
+    <h2>Power</h2><br>
+    <div id="power-states">
+      <span onclick="sendCmd('control','power_on')" id="power-button-on" class="power-button">
+        <img src="static/img/all_on.png">
+      </span>
+      <span onclick="sendCmd('control','power_off')" id="power-button-off" class="power-button" style="padding-left:50px;">
+        <img src="static/img/all_off.png">
+      </span>
+    </div>
+  </div >
+</div>
 </body>
-</div>
-</div>

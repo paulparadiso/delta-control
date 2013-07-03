@@ -43,6 +43,7 @@ urls = (
 	'/master', 'Index',
 	'/control','Command',
 	'/playlists','Playlists',
+	'/help', 'Help',
 	'/getplaylist', 'GetPlaylist',
 	'/scheduling','Scheduling',
 	'/submitdate', 'Date',
@@ -78,7 +79,11 @@ class Index:
 		playlists = []
 		for i in playlist_keys:
 			playlists.append(i.split(':')[1])
-		return render.master(header, nav, playlists)
+		cue_keys = redis.keys("cue:*")
+		cues = []
+		for i in cue_keys:
+			cues.append(i.split(':')[1])
+		return render.master(header, nav, playlists, cues)
 
 #scheduling.html
 
@@ -148,6 +153,15 @@ class Clips:
 		redis.set("cue:" + clipName, ribbonCue + ':' + conciergeCue)
 		redis.save()
 
+#help.html
+
+class Help:
+
+	def GET(self):
+		header = render.header()
+		nav = render.nav('help')
+		return render.help(header, nav)
+
 #sndmsg.html.  A 'hidden' file for testing.
 
 class SndMsg:
@@ -175,12 +189,24 @@ class Command:
 			self._start_playlist(params.cmd)
 		if params.cmdtype == 'control':
 			self._control_cmd(params.cmd)
+		if params.cmdtype == 'clip':
+			self._start_clip(params.cmd)
 	
 	#Start a new playlist.
 
 	def _start_playlist(self, plist):
 		play_cmd = 'start/' + plist + '/now'
 		redis.set('playlist_cmd', play_cmd)
+
+	#Create a temporary playlist and add the clip to it.
+
+	def _start_clip(self, clip):
+		print "creating tempory playlist and adding - " + clip
+		plist = []
+		plist.append(clip)
+		redis.set('playlist:instantPlaylist', json.dumps(plist))
+		self._start_playlist('instantPlaylist')
+
 
 	#Send a command to the video server.
 
@@ -269,7 +295,7 @@ class Date:
 		print "setting week of - " + _date
 		week = date(int(date_lst[2]), int(date_lst[0]), int(date_lst[1])).isocalendar()[1]
 		week_start = self._get_week_start(week, int(date_lst[2]))
-		for i in range(0,7):
+		for i in range(0,5):
 			next_date = week_start + timedelta(days=i)
 			year = str(next_date.year)
 			if(next_date.month < 10):
@@ -328,7 +354,7 @@ class Date:
 		print "setting week of - " + _date
 		week = date(int(date_lst[2]), int(date_lst[0]), int(date_lst[1])).isocalendar()[1]
 		week_start = self._get_week_start(week, int(date_lst[2]))
-		for i in range(0,7):
+		for i in range(0,5):
 			next_date = week_start + timedelta(days=i)
 			year = str(next_date.year)
 			if(next_date.month < 10):
