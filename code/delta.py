@@ -282,7 +282,7 @@ class Date:
 	#Clear the scheduler for a particular day.
 
 	def _clear_day(self, _date):
-		print "clearing " + _date
+		#print "clearing " + _date
 		keys = redis.keys('scheduledItem:' + _date + ':*')
 		for i in keys:
 			redis.delete(i)
@@ -292,7 +292,7 @@ class Date:
 
 	def _clear_week(self, _date):
 		date_lst = _date.split('/')
-		print "setting week of - " + _date
+		#print "setting week of - " + _date
 		week = date(int(date_lst[2]), int(date_lst[0]), int(date_lst[1])).isocalendar()[1]
 		week_start = self._get_week_start(week, int(date_lst[2]))
 		for i in range(0,5):
@@ -334,24 +334,42 @@ class Date:
 
 	def _set_month(self, _date, sch):
 		date_lst = _date.split('/')
-		for i in range(1, days_in_month[date_lst[0]] + 1):
+		#for i in range(1, days_in_month[date_lst[0]] + 1):
+		#	year = date_lst[2]
+		#	if(date_lst[0] < 10):
+		#		month = "0" + date_lst[0]
+		#	else:
+		#		month = date_lst[0]
+		#	if(i < 10):
+		#		day = "0" + str(i)
+		#	else:
+		#		day = str(i)
+		#	new_date = month + '/' + day + '/' + year
+		#	self._set_day(new_date, sch)
+		#current_day = int(date_lst[1])
+		week = date(int(date_lst[2]), int(date_lst[0]), int(date_lst[1])).isocalendar()[1]
+		week_start = self._get_week_start(week, int(date_lst[2]))
+		current_day = week_start.day
+		while  current_day < days_in_month[date_lst[0]]:
 			year = date_lst[2]
 			if(date_lst[0] < 10):
 				month = "0" + date_lst[0]
 			else:
 				month = date_lst[0]
-			if(i < 10):
-				day = "0" + str(i)
+			if(current_day < 10):
+				day = "0" + str(current_day)
 			else:
-				day = str(i)
+				day = str(current_day)
 			new_date = month + '/' + day + '/' + year
-			self._set_day(new_date, sch)
+			self._set_week(new_date, sch)
+			current_day = current_day + 7
+
 
 	#Copy a days schedule to the entire week.
 
 	def _set_week(self, _date, sch):
 		date_lst = _date.split('/')
-		print "setting week of - " + _date
+		#print "setting week of - " + _date
 		week = date(int(date_lst[2]), int(date_lst[0]), int(date_lst[1])).isocalendar()[1]
 		week_start = self._get_week_start(week, int(date_lst[2]))
 		for i in range(0,5):
