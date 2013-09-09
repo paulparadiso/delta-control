@@ -265,7 +265,7 @@ class Date:
 			self._clear_week(date)
 			self._set_week(date, params)
 		if(params.mode == "month"):
-			self._clear_month(date)
+			#self._clear_month(date)
 			self._set_month(date, params)
 
 	#Calculate the start date of a week.
@@ -349,10 +349,27 @@ class Date:
 		#current_day = int(date_lst[1])
 		week = date(int(date_lst[2]), int(date_lst[0]), int(date_lst[1])).isocalendar()[1]
 		week_start = self._get_week_start(week, int(date_lst[2]))
+		b_staggered_months = False
+		if week_start.month != int(date_lst[0]):
+			b_staggered_months = True
+		if b_staggered_months:
+			year = str(week_start.year)
+			if(week_start.day < 10):
+				day = "0" + str(week_start.day)
+			else:
+				day = str(week_start.day)
+			if(week_start.month < 10):
+				month = "0" + str(week_start.month)
+			else:
+				month = str(week_start.month)
+			week_to_set = month + '/' + day + '/' + year
+			self._set_week(week_to_set, sch)
+			week = date(int(date_lst[2]), int(date_lst[0]), int(date_lst[1]) + 7).isocalendar()[1]
+			week_start = self._get_week_start(week, int(date_lst[2]))
 		current_day = week_start.day
 		while  current_day < days_in_month[date_lst[0]]:
 			year = date_lst[2]
-			if(date_lst[0] < 10):
+			if(int(date_lst[0]) < 10):
 				month = "0" + date_lst[0]
 			else:
 				month = date_lst[0]
@@ -361,6 +378,7 @@ class Date:
 			else:
 				day = str(current_day)
 			new_date = month + '/' + day + '/' + year
+			self._clear_week(new_date)
 			self._set_week(new_date, sch)
 			current_day = current_day + 7
 
