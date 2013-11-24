@@ -379,6 +379,7 @@ class Date:
 			else:
 				day = str(current_day)
 			new_date = month + '/' + day + '/' + year
+			print "setting week for " + new_date
 			self._clear_week(new_date)
 			self._set_week(new_date, sch)
 			print "current day = " + str(current_day)
@@ -390,8 +391,11 @@ class Date:
 	def _set_week(self, _date, sch):
 		date_lst = _date.split('/')
 		#print "setting week of - " + _date
-		week = date(int(date_lst[2]), int(date_lst[0]), int(date_lst[1])).isocalendar()[1]
-		week_start = self._get_week_start(week, int(date_lst[2]))
+		cal = date(int(date_lst[2]), int(date_lst[0]), int(date_lst[1])).isocalendar()
+		week = cal[1]
+		year = cal[0]
+		#print week
+		week_start = self._get_week_start(week, year)
 		for i in range(0,5):
 			next_date = week_start + timedelta(days=i)
 			year = str(next_date.year)

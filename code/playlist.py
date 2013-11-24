@@ -214,6 +214,9 @@ class PlaylistManager(threading.Thread):
 		if(retr_list):
 			#self.wait_list = []
 			self.current_playlist = Playlist(json.loads(retr_list))
+			if(self.current_playlist != 'instantPlaylist'):
+				redis.set('defaultPlaylist', self.current_playlist)
+				redis.save()
 			#self._advance_playlist()
 		else:
 			print "blank playlist"
