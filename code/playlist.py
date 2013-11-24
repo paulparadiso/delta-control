@@ -215,7 +215,7 @@ class PlaylistManager(threading.Thread):
 			#self.wait_list = []
 			self.current_playlist = Playlist(json.loads(retr_list))
 			if(self.current_playlist != 'instantPlaylist'):
-				self.redis.set('defaultPlaylist', self.current_playlist)
+				self.redis.set('defaultPlaylist', item)
 				self.redis.save()
 			#self._advance_playlist()
 		else:
