@@ -10,6 +10,7 @@ var bHaveOpenPlaylist = false;
 var clipList;
 var bEditingClip = false;
 var editedClip;
+var editClipName;
 var schedulerDate = ""
 
 function init(){
@@ -56,6 +57,18 @@ function initDatepicker(){
 	dateToSet = m + '/' + d + '/' + y;
 	schedulerDate = dateToSet;
 	updateScheduler(schedulerDate);
+}
+
+function sortList(l){
+	l.sort(function(a, b){
+		if(a.name.toLowerCase() < b.name.toLowerCase()){
+			return -1;
+		} 
+		if(a.name.toLowerCase() > b.name.toLowerCase()){
+			return 1;
+		}
+		return 0;
+	})
 }
 
 /*
@@ -116,6 +129,7 @@ Slots are selected by parsing the time building the div id with them.
 
 function loadScheduler(data){
 	var playlists = eval('(' + data + ')');
+	//console.log(playlists);
 	resetScheduler(); 
 	for(var p in playlists){
 		if(playlists.hasOwnProperty(p)){
@@ -435,19 +449,22 @@ Set up the view for editing a cue.
 
 function editClip(clip){
 	if(clip){
+		var i = parseInt(clip);
 		$('#clips-view').css('display','none');
 		$('#clips-edit-view').css('display','');
 		$('#new-clip-name').val("");
 		$('#new-clip-ribbon').val("");
 		$('#new-clip-concierge').val("");
-		var markers = clipList[clip].split(':');
-		$('#new-clip-name').val(clip);
+		var markers = clipList[i].val.split(':');
+		editClipName = clipList[i].name;
+		bEditingClip = true;
+		$('#new-clip-name').val(clipList[i].name);
 		$('#new-clip-ribbon').val(markers[0]);
 		$('#new-clip-concierge').val(markers[1]);
-		$('#new-clip-name-label').html("Current Name: " + clip);
+		$('#new-clip-name-label').html("Current Name: " + clipList[i].name);
 		$('#new-clip-ribbon-label').html("Current Ribbon Marker: " + markers[0]);
 		$('#new-clip-concierge-label').html("Current Concierge Marker: " + markers[1]);
-		editedClip = clip;
+		editedClip = clipList[i].name;
 	/*
 	}
 	if(b == "true"){
@@ -462,6 +479,39 @@ function editClip(clip){
 		$('#clips-edit-view').css('display','none');
 		$('#clips-title').html('<h2 class="page-label"><b>Current Clip Names</b></h2>');
 		loadClips();
+	}
+}
+
+/*
+Remove clip.
+*/
+
+function removeClip(clip){
+	if(clip){
+		var index = parseInt(clip)
+		var clipName = clipList[index].name
+		//console.log(clipName);
+		$.ajax({
+			url:'clips/' + clipName,
+			type:'DELETE',
+			data:{clipName:clipName},
+			success: function(data){
+				loadClips();
+			}
+		});
+	}
+}
+
+function removePlaylist(playlist){
+	if(playlist){
+		//console.log(playlist);
+		$.ajax({
+			url:'playlists/' + playlist,
+			type:'DELETE',
+			success: function(data){
+				location.reload();
+			}
+		});
 	}
 }
 
@@ -501,11 +551,12 @@ function saveClip(){
 	var edit = "false";
 	if(bEditingClip){
 		edit = "true";
+		bEditingClip = false;
 	}
 	$.ajax({
 		url:'clips',
 		type:'POST',
-		data:{clipName:clipName,ribbonCue:ribbonCue,conciergeCue:conciergeCue},
+		data:{clipName:clipName,ribbonCue:ribbonCue,conciergeCue:conciergeCue,edit:edit,editClipName:editClipName},
 		success:function(data){
 			//loadClips();
 			editClip();
@@ -523,7 +574,15 @@ function loadClips(){
 		type:'POST',
 		success:function(data){
 			//alert(data);
-			clipList = JSON.parse(data);
+			var clips = JSON.parse(data);
+			clipList = []
+			for(var key in clips){
+				clipList.push({
+					'name': key,
+					'val': clips[key]
+				})
+			}
+			sortList(clipList);
 			var cueHTML = "";
 			//alert(clipList);
 			var dd = document.getElementById("cue-dropdown");
@@ -531,13 +590,13 @@ function loadClips(){
 				dd.options.length = 0;
 				dd.options.add(new Option("Select Clip", "__IGNORE__"));
 			}
-			for(var key in clipList){
+			for(var i = 0; i < clipList.length; i++){
 				//alert(key);
 				if(dd){
-					dd.options.add(new Option(key, key));
+					dd.options.add(new Option(clipList[i].name, clipList[i].name));
 				}
-				var markers = clipList[key].split(":");
-				cueHTML += "<b>" + key + "</b>" + "<div class='bottom-bordered'><span style='float:right;'><img src='static/img/edit.png' onclick='editClip(\"" + key + "\")'></img></span><br>" +
+				var markers = clipList[i].val.split(":");
+				cueHTML += "<b>" + clipList[i].name + "</b>" + "<div class='bottom-bordered'><span style='float:right;'><img src='static/img/edit.png' onclick='editClip(\"" + i + "\")'></img><img style=\"padding-left:10px;\" src='static/img/remove.png' onclick='removeClip(\"" + i + "\")'></img></span><br>" +
 				"<span style='margin-left:10px;'><b>Ribbon: </b>" + markers[0] + "</span><br>" +
 				"<span style='margin-left:10px;'><b>Concierge: </b>" + markers[1] + "</span><br><br></div>";
 			}

@@ -144,11 +144,12 @@ class ScheduleManager:
 		query_results = self.redis.keys(db_query)
 		if(len(query_results) > 0):
 			playlist = self.redis.get(query_results[0])
-			play_cmd = 'start/' + playlist
-			print "scheduler sending " + playlist
-			#self.redis.delete(query_results[0])
-			#self.sock.sendto(play_cmd,('127.0.0.1', settings.addresses['self'][1]))
-			self.new_playlist = play_cmd
-			self.b_have_new_playlist = True
+			if(playlist):
+				play_cmd = 'start/' + playlist
+				print "scheduler sending " + playlist
+				#self.redis.delete(query_results[0])
+				#self.sock.sendto(play_cmd,('127.0.0.1', settings.addresses['self'][1]))
+				self.new_playlist = play_cmd
+				self.b_have_new_playlist = True
 		self._check_future()
 

@@ -42,6 +42,7 @@ urls = (
 	'/', 'Index',
 	'/master', 'Index',
 	'/control','Command',
+	'/playlists/(.+)','Playlists',
 	'/playlists','Playlists',
 	'/help', 'Help',
 	'/getplaylist', 'GetPlaylist',
@@ -50,6 +51,7 @@ urls = (
 	'/submitschedule', 'Date',
 	'/getplaylists', 'GetPlaylists',
 	'/setdefault', 'SetDefault',
+	'/clips/(.+)','Clips',
 	'/clips','Clips',
 	'/getclips','GetClips',
 	'/clearplaylists', 'ClearPlaylists',
@@ -96,7 +98,43 @@ class Scheduling:
 		playlists = []
 		for i in playlist_keys:
 			playlists.append(i.split(':')[1])
+		playlists = sorted(playlists)
 		return render.scheduling(header, nav, playlists)
+
+def edit_playlist(playlist, old_name, new_name):
+	for n,i in enumerate(playlist):
+		if i == old_name:
+			#print "changing " + old_name
+			playlist[n] = new_name
+
+def edit_playlists(old_name, new_name):
+	print "fixing playlists"
+	playlist_keys = redis.keys('playlist:*')
+	for i in playlist_keys:
+		playlist_name = i.split(':')[1]
+		playlist = json.loads(redis.get(i))
+		#print playlist
+		edit_playlist(playlist, old_name, new_name)
+		redis.set('playlist:' + playlist_name, json.dumps(playlist))
+		redis.save()
+
+def cull_playlist(playlist, item):
+	playlist[:] = [i for i in playlist if i != item]
+
+def cull_playlists(item):
+	playlist_keys = redis.keys('playlist:*')
+	for i in playlist_keys:
+		playlist_name = i.split(':')[1]
+		playlist = json.loads(redis.get(i))
+		cull_playlist(playlist, item)
+		redis.set('playlist:' + playlist_name, json.dumps(playlist))
+		redis.save()
+
+def cull_scheduler(plist):
+	scheduledItems = redis.keys('scheduledItem:*')
+	for s in scheduledItems:
+		if redis.get(s) == plist:
+			redis.delete(s)
 
 #playlists.html
 
@@ -105,7 +143,7 @@ class Playlists:
 	def GET(self):
 		header = render.header()
 		nav = render.nav('playlists')
-		playlists = {}
+		playlists = []
 		playlist_keys = redis.keys('playlist:*')
 		cues = []
 		cue_keys = redis.keys('cue:*')
@@ -114,8 +152,17 @@ class Playlists:
 		for i in playlist_keys:
 			playlist_name = i.split(':')[1]
 			playlist = json.loads(redis.get(i))
-			playlists[playlist_name] = playlist
-		return render.playlists(header, nav, playlists, cues)
+			#new_item = {'name':playlist_name, 'val':playlist}
+			playlists.append({'name':playlist_name, 'val': playlist})
+			#playlists[playlist_name] = playlist
+			#playlists = sorted(playlists)
+		playlists = sorted(playlists, key=lambda k: k['name']) 
+		playlist_keys = []
+		for i in playlists:
+			playlist_keys.append(i['name'])
+		print "returning plists"
+		print playlists
+		return render.playlists(header, nav, playlists, cues, playlist_keys)
 
 	#Receive new playlists and enter them into the database.
 
@@ -129,6 +176,11 @@ class Playlists:
 		del plist[-1]
 		redis.set('playlist:' + plist_name, json.dumps(plist))
 		redis.save()
+
+	def DELETE(self, plist):
+		redis.delete("playlist:" + plist)
+		redis.save()
+		cull_scheduler(plist)
 
 #clips.html
 
@@ -147,11 +199,27 @@ class Clips:
 
 	def POST(self):
 		params = web.input()
+		print params
 		clipName = params.clipName
 		ribbonCue = params.ribbonCue
 		conciergeCue = params.conciergeCue
+		if params.edit == 'true':
+			print "Have an edited clip."
+			if params.editClipName != clipName:
+				print "renaming - cue:" + params.editClipName
+				redis.rename("cue:" + params.editClipName, "cue:" + clipName)
+				edit_playlists(params.editClipName, clipName)
+				#clipName = params.editClipName
 		redis.set("cue:" + clipName, ribbonCue + ':' + conciergeCue)
 		redis.save()
+
+	def DELETE(self, name):
+		#params = web.input()
+		#print params
+		clipName = name
+		redis.delete("cue:" + clipName)
+		redis.save()
+		cull_playlists(name)
 
 #help.html
 
@@ -428,6 +496,7 @@ class GetPlaylist:
 		params = web.input()
 		playlist = params.playlist
 		plist = redis.get('playlist:' + playlist)
+		print plist
 		return plist
 
 
@@ -448,12 +517,14 @@ class SetDefault:
 class GetClips:
 
 	def POST(self):
+		print "GETTING CLIPS"
 		cues = {}
 		cue_keys = redis.keys('cue:*')
+		print cue_keys
 		for i in cue_keys:
 			cueName = i.split(':')[1]
 			cues[cueName] = redis.get(i)
-		#print cues
+		print cues
 		return json.dumps(cues)
 
 #Clear all playlists.

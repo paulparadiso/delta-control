@@ -1,4 +1,4 @@
-$def with(header, nav, playlists, cues)
+$def with(header, nav, playlists, cues, playlist_keys)
 $:header
 $:nav
 
@@ -24,18 +24,18 @@ $:nav
   <div id="playlist-view" style="display:''; margin-left:50px;">
     <div id="edit-button" class="bottom-bordered" style="padding-bottom:48px;">
       <img style="float:right;" src="static/img/new_playlist.png" onclick="newPlaylist()">
-    </div>
-    $ playlist_keys = playlists.keys()
-    $for i in playlist_keys:
-      $ div_id = i.replace(' ','-').replace('&','_')
+    </div> 
+    $for p in playlist_keys:
+      $ div_id = p.replace(' ','-').replace('&','_')
       <div id="$div_id" class="bottom-bordered" style="padding-bottom:18px;">
         <img  style="padding-top:20px;" onclick="openPlaylist('$div_id')" src="static/img/plus.png"></img>
-        <b>$i</b>
-        <img style="padding-left:10px; padding-top:15px; float:right;" onclick="editPlaylist('$i')" src="static/img/edit.png"></img>
-        <img style="padding-top:15px; float:right;" onclick="makeDefault('$i')" src="static/img/make_default_blue.png"></img>
+        <b>$p</b>
+        <img style="padding-left:10px; padding-top:15px; float:right;" onclick="removePlaylist('$p')" src="static/img/remove.png"></img>
+        <img style="padding-left:10px; padding-top:15px; float:right;" onclick="editPlaylist('$p')" src="static/img/edit.png"></img>
+        <img style="padding-top:15px; float:right;" onclick="makeDefault('$p')" src="static/img/make_default_blue.png"></img>
         $ content_div_id = div_id + '-content'
         <div id="$content_div_id" style="display:none;">
-          $ cues = playlists[i]
+          $ cues = playlists[playlist_keys.index(p)]['val']
           $for j in cues:
             <span class="playlist-open-item">
             $j
