@@ -81,10 +81,12 @@ class Index:
 		playlists = []
 		for i in playlist_keys:
 			playlists.append(i.split(':')[1])
+		playlists = sorted(playlists)
 		cue_keys = redis.keys("cue:*")
 		cues = []
 		for i in cue_keys:
 			cues.append(i.split(':')[1])
+		cues = sorted(cues)
 		return render.master(header, nav, playlists, cues)
 
 #scheduling.html

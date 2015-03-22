@@ -487,31 +487,35 @@ Remove clip.
 */
 
 function removeClip(clip){
-	if(clip){
-		var index = parseInt(clip)
-		var clipName = clipList[index].name
-		//console.log(clipName);
-		$.ajax({
-			url:'clips/' + clipName,
-			type:'DELETE',
-			data:{clipName:clipName},
-			success: function(data){
-				loadClips();
-			}
-		});
+	if(confirm("Are you sure you would like to remove this clip?")){
+		if(clip){
+			var index = parseInt(clip)
+			var clipName = clipList[index].name
+			//console.log(clipName);
+			$.ajax({
+				url:'clips/' + clipName,
+				type:'DELETE',
+				data:{clipName:clipName},
+				success: function(data){
+					loadClips();
+				}
+			});
+		}
 	}
 }
 
 function removePlaylist(playlist){
-	if(playlist){
-		//console.log(playlist);
-		$.ajax({
-			url:'playlists/' + playlist,
-			type:'DELETE',
-			success: function(data){
-				location.reload();
-			}
-		});
+	if(confirm("Are you sure you would like to remove this playlist?")){
+		if(playlist){
+			//console.log(playlist);
+			$.ajax({
+				url:'playlists/' + playlist,
+				type:'DELETE',
+				success: function(data){
+					location.reload();
+				}
+			});
+		}
 	}
 }
 
